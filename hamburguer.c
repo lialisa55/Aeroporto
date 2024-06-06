@@ -18,4 +18,5 @@ void fechamentoDia(FILE *arquivo, int qtdReservas) {
     printf("Quantidade de reservas: %d\n", qtdReservas);
     printf("Posição: %.2f\n", valorTotal);
     printf("--------------------------------------------------");
+    fclose(arquivo);
 }
