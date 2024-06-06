@@ -60,6 +60,36 @@ passageiro registrar_passageiro(){
     return persona;
 }
 
+/*chamado pelo comando FV*/
+void fechamentoVoo(FILE *arquivo, int qtdPassageiros) {
+    arquivo = fopen("nomeDoArquivo.txt", "r");
+    float valorTotal;
+    fscanf(arquivo, "%f", &valorTotal);
+    //Ainda não sei como achar essa parte específica no arquivo;
+    printf("--------------------------------------------------\n");
+    printf("Voo Fechado!\n");
+    for(int i = 0; i < qtdPassageiros; i++) {
+        //Aqui tem que pegar os dados dos passageiros e printar eles. Juro que vou descobrir como;
+    }
+    printf("Valor Total: %.2f\n", valorTotal);
+    printf("--------------------------------------------------");
+    fclose(arquivo);
+}
+
+/*chamado pelo comando FD*/
+void fechamentoDia(FILE *arquivo, int qtdReservas) {
+    arquivo = fopen("nomeDoArquivo.txt", "r");
+    float valorTotal;
+    fscanf(arquivo, "%f", &valorTotal);
+    //Ainda não sei como achar essa parte específica no arquivo;
+    printf("--------------------------------------------------\n");
+    printf("Fechamento do dia:\n");
+    printf("Quantidade de reservas: %d\n", qtdReservas);
+    printf("Posição: %.2f\n", valorTotal);
+    printf("--------------------------------------------------");
+    fclose(arquivo);
+}
+
 int main()
 {
     passageiro persona = registrar_passageiro();
@@ -70,15 +100,3 @@ int main()
     return 0;
 }
 
-void fechamentoDia(FILE *arquivo, int qtdReservas) {
-    arquivo = fopen(nomeDoArquivo, "r");
-    int valorTotal
-    fscanf(arquivo, "%d", &valorTotal);
-    //Ainda não sei como achar essa parte específica no arquivo, acontece neh, kk;
-    printf("--------------------------------------------------\n");
-    printf("Fechamento do dia:\n");
-    printf("Quantidade de reservas: %d\n", qtdReservas);
-    printf("Posição: %.2f\n", valorTotal);
-    printf("--------------------------------------------------");
-    fclose(arquivo);
-}
