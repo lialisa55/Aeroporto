@@ -103,3 +103,22 @@ int main()
     return 0;
 }
 
+consultarcpf(char *cpf, FILE *fp){
+        printf("%s\n", cpf);
+        printf("%s_%s", nome, sobrenome);
+        printf("%s", data);
+        printf("Voo:_%s", numero_voo);
+        printf("Assento:_%s", assento);
+        printf("Classe:_&s", classe);
+        printf("Trecho:_%s_%s", origem, destino);
+        printf("Valor:_%f", valor);
+}
+
+void main (void){
+    FILE *fp;
+    fp = fopen("file.txt", "w+);
+    char *instrucao;
+    char *cpf[20];
+
+    consultarcpf(cpf, fp);
+}
