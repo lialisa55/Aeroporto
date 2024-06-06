@@ -20,6 +20,7 @@ char *alocar_string(int x){
     return b;
 }
 
+/*chamado pelo comando AV*/
 void registrar_novo_voo(int *assentos, float *valor_da_economica, float *valor_BUSINESS){
     scanf("%d %f %f", assentos, valor_da_economica, valor_BUSINESS);
     //insira jeito de registrar num arquivo
@@ -33,7 +34,7 @@ char *enxutar_string(char *a){
     }
     return b;
 }
-
+/*chamado pelo comando RR*/
 passageiro registrar_passageiro(){
     passageiro persona;
     persona.nome = alocar_string(100);
