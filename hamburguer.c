@@ -7,3 +7,15 @@ struct Passageiro
     int data[3];
 }
 typedef struct Passageiro passageiro;
+
+void fechamentoDia(FILE *arquivo, int qtdReservas) {
+    arquivo = fopen(nomeDoArquivo, "r");
+    int valorTotal
+    fscanf(arquivo, "%d", &valorTotal);
+    //Ainda não sei como achar essa parte específica no arquivo;
+    printf("--------------------------------------------------\n");
+    printf("Fechamento do dia:\n");
+    printf("Quantidade de reservas: %d\n", qtdReservas);
+    printf("Posição: %.2f\n", valorTotal);
+    printf("--------------------------------------------------");
+}
