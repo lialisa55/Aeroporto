@@ -5,10 +5,10 @@
 
 struct Passageiro
 {
-    char* nome, sobrenome, cpf, assento, classe, origem, destino, numero_voo;
+    char *nome, *sobrenome, *cpf, *assento, *classe, *origem, *destino, *numero_voo;
     float valor;
-    int data[3]
-}
+    int data[3];
+};
 typedef struct Passageiro passageiro;
 
 char *alocar_string(int x){
@@ -20,12 +20,12 @@ char *alocar_string(int x){
     return b;
 }
 
-void registrar_novo_voo(int *assentos, int *valor_da_economica, int *valor_BUSINESS){
+void registrar_novo_voo(int *assentos, float *valor_da_economica, float *valor_BUSINESS){
     scanf("%d %f %f", assentos, valor_da_economica, valor_BUSINESS);
     //insira jeito de registrar num arquivo
 }
 
-void enxutar_string(char *a){
+char *enxutar_string(char *a){
     char *b = realloc(a, (strlen(a) + 1) * sizeof(char));
     if (b == NULL){
         printf("OWO sumimasen senpai-san! nao tenho memoria o suficiente UWU");
@@ -58,6 +58,16 @@ passageiro registrar_passageiro(){
     persona.destino = enxutar_string(persona.destino);
     persona.numero_voo = enxutar_string(persona.numero_voo);
     return persona;
+}
+
+int main()
+{
+    passageiro persona = registrar_passageiro();
+    printf("%s %s %s %d %d %d %s %s %s %.02f %s %s",
+        persona.nome, persona.sobrenome, persona.cpf, persona.data[0], 
+        persona.data[1], persona.data[2], persona.numero_voo, persona.assento, persona.classe, persona.valor, persona.origem, persona.destino);
+
+    return 0;
 }
 
 void fechamentoDia(FILE *arquivo, int qtdReservas) {
