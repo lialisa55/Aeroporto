@@ -63,6 +63,7 @@ passageiro registrar_passageiro(){
 
 /*chamado pelo comando FV*/
 void fechamentoVoo(FILE *arquivo, int qtdPassageiros) {
+    //qtdPassageiros é obtido por uma váriavel que é incrimentada quando chama o comando RR;
     arquivo = fopen("nomeDoArquivo.txt", "r");
     float valorTotal;
     fscanf(arquivo, "%f", &valorTotal);
@@ -79,6 +80,7 @@ void fechamentoVoo(FILE *arquivo, int qtdPassageiros) {
 
 /*chamado pelo comando FD*/
 void fechamentoDia(FILE *arquivo, int qtdReservas) {
+     //qtdReservas é obtido por uma váriavel que é incrimentada quando chama o comando RR;
     arquivo = fopen("nomeDoArquivo.txt", "r");
     float valorTotal;
     fscanf(arquivo, "%f", &valorTotal);
