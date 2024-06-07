@@ -31,7 +31,7 @@ passageiro *realocar_passageiros(passageiro *p, int x){
 
 /*chamado pelo comando AV*/
 void registrar_novo_voo(float informacoes_do_voo[3]){
-    scanf("%.0f %f %f", &informacoes_do_voo[0], &informacoes_do_voo[1], &informacoes_do_voo[2]);
+    scanf("%f %f %f", &informacoes_do_voo[0], &informacoes_do_voo[1], &informacoes_do_voo[2]);
     //insira jeito de registrar num arquivo
 }
 
@@ -105,7 +105,7 @@ void fechamentoDia(FILE *arquivo, int qtdReservas) {
 void imprimirPassageiro(int x, passageiro *lista_passageiros){
     printf("%s\n", lista_passageiros[x].cpf);
     printf("%s %s\n", lista_passageiros[x].nome, lista_passageiros[x].sobrenome);
-    printf("%d/%d/%d\n", lista_passageiros[x].data);
+    printf("%d/%d/%d\n", lista_passageiros[x].data[0], lista_passageiros[x].data[1], lista_passageiros[x].data[2]);
     printf("Voo:_%s\n", lista_passageiros[x].numero_voo);
     printf("Assento:_%s\n", lista_passageiros[x].assento);
     printf("Classe:_%s\n", lista_passageiros[x].classe);
@@ -113,7 +113,7 @@ void imprimirPassageiro(int x, passageiro *lista_passageiros){
     printf("Valor:_%.02f\n", lista_passageiros[x].valor);
 }
 
-void acharCPF(char * cpf, passageiro *lista_passageiros, int tamanho_lista_passageiros){
+int acharCPF(char * cpf, passageiro *lista_passageiros, int tamanho_lista_passageiros){
     for (int i = 0; i < tamanho_lista_passageiros; i++){
         if (!strcmp(lista_passageiros[i].cpf, cpf)){
             return i;
@@ -127,13 +127,13 @@ int main (void){
     int tamanho_lista_passageiros = 0;
     FILE *fp = fopen("dados.txt", "r");
     if (fp != NULL){
-        fscanf(fp, "%.0f %f %f", &informacoes_do_voo[0], &informacoes_do_voo[1], &informacoes_do_voo[2]);
+        fscanf(fp, "%f %f %f", &informacoes_do_voo[0], &informacoes_do_voo[1], &informacoes_do_voo[2]);
         int n;
         fscanf(fp, "%d", &n);
         lista_passageiros = realocar_passageiros(lista_passageiros, n);
         tamanho_lista_passageiros = n;
-        for (int i = 0; i < n; i++)
-            passageiros[i] = registrar_passageiro();
+        for (int i = 0; i < n; i++){
+            lista_passageiros[i] = registrar_passageiro();
         }
         fclose(fp);
     }
@@ -148,7 +148,7 @@ int main (void){
         else if (!strcmp(comando, "CR")){
             char cpf[12];
             scanf("%s", cpf);
-            int indice = consultarcpf(cpf, lista_passageiros, tamanho_lista_passageiros);
+            int indice = acharCPF(cpf, lista_passageiros, tamanho_lista_passageiros);
             imprimirPassageiro(indice, lista_passageiros);
         }
     }
@@ -158,3 +158,4 @@ int main (void){
     char *cpf[20];
 
     consultarcpf(cpf, fp);*/
+}
