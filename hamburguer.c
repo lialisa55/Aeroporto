@@ -44,7 +44,7 @@ char *enxutar_string(char *a){
     return b;
 }
 /*chamado pelo comando RR*/
-passageiro registrar_passageiro(){
+passageiro registrar_passageiro(FILE *fp){ //se fp for NULL, use scanf normal
     passageiro persona;
     persona.nome = alocar_string(100);
     persona.sobrenome = alocar_string(100);
@@ -55,9 +55,16 @@ passageiro registrar_passageiro(){
     persona.origem = alocar_string(100);
     persona.destino = alocar_string(100);
     persona.numero_voo = alocar_string(100);
-    scanf("%s %s %s %d %d %d %s %s %s %f %s %s",
+    if (fp != NULL){
+        fscanf(fp, "%s %s %s %d %d %d %s %s %s %f %s %s",
         persona.nome, persona.sobrenome, persona.cpf, &persona.data[0], 
         &persona.data[1], &persona.data[2], persona.numero_voo, persona.assento, persona.classe, &persona.valor, persona.origem, persona.destino);
+    }
+    else{
+        scanf("%s %s %s %d %d %d %s %s %s %f %s %s",
+        persona.nome, persona.sobrenome, persona.cpf, &persona.data[0], 
+        &persona.data[1], &persona.data[2], persona.numero_voo, persona.assento, persona.classe, &persona.valor, persona.origem, persona.destino);
+    }
     persona.nome = enxutar_string(persona.nome);
     persona.sobrenome = enxutar_string(persona.sobrenome);
     persona.cpf = enxutar_string(persona.cpf);
@@ -102,15 +109,26 @@ void fechamentoDia(FILE *arquivo, int qtdReservas) {
     fclose(arquivo);
 }
 
-void imprimirPassageiro(int x, passageiro *lista_passageiros){
-    printf("%s\n", lista_passageiros[x].cpf);
-    printf("%s %s\n", lista_passageiros[x].nome, lista_passageiros[x].sobrenome);
-    printf("%d/%d/%d\n", lista_passageiros[x].data[0], lista_passageiros[x].data[1], lista_passageiros[x].data[2]);
-    printf("Voo:_%s\n", lista_passageiros[x].numero_voo);
-    printf("Assento:_%s\n", lista_passageiros[x].assento);
-    printf("Classe:_%s\n", lista_passageiros[x].classe);
-    printf("Trecho:_%s %s\n", lista_passageiros[x].origem, lista_passageiros[x].destino);
-    printf("Valor:_%.02f\n", lista_passageiros[x].valor);
+void imprimirPassageiro(passageiro pessoa){
+    printf("%s\n", pessoa.cpf);
+    printf("%s %s\n", pessoa.nome, pessoa.sobrenome);
+    printf("%d/%d/%d\n", pessoa.data[0], pessoa.data[1], pessoa.data[2]);
+    printf("Voo: %s\n", pessoa.numero_voo);
+    printf("Assento: %s\n", pessoa.assento);
+    printf("Classe: %s\n", pessoa.classe);
+    printf("Trecho: %s %s\n", pessoa.origem, pessoa.destino);
+    printf("Valor: %.02f\n", pessoa.valor);
+}
+
+void f_imprimirPassageiro(FILE *fp, passageiro pessoa){
+    fprintf(fp, "%s %s ", pessoa.nome, pessoa.sobrenome);
+    fprintf(fp, "%s ", pessoa.cpf);
+    fprintf(fp, "%d %d %d ", pessoa.data[0], pessoa.data[1], pessoa.data[2]);
+    fprintf(fp, "%s ", pessoa.numero_voo);
+    fprintf(fp, "%s ", pessoa.assento);
+    fprintf(fp, "%s ", pessoa.classe);
+    fprintf(fp, "%.02f ", pessoa.valor);
+    fprintf(fp, "%s %s ", pessoa.origem, pessoa.destino);
 }
 
 int acharCPF(char * cpf, passageiro *lista_passageiros, int tamanho_lista_passageiros){
@@ -119,37 +137,58 @@ int acharCPF(char * cpf, passageiro *lista_passageiros, int tamanho_lista_passag
             return i;
         }
     }
+    return -1;
 }
 
 int main (void){
-    float informacoes_do_voo[3];
+    float informacoes_do_voo[4] = {0};
     passageiro *lista_passageiros = NULL;
     int tamanho_lista_passageiros = 0;
     FILE *fp = fopen("dados.txt", "r");
     if (fp != NULL){
-        fscanf(fp, "%f %f %f", &informacoes_do_voo[0], &informacoes_do_voo[1], &informacoes_do_voo[2]);
-        int n;
-        fscanf(fp, "%d", &n);
-        lista_passageiros = realocar_passageiros(lista_passageiros, n);
-        tamanho_lista_passageiros = n;
-        for (int i = 0; i < n; i++){
-            lista_passageiros[i] = registrar_passageiro();
+        printf("arquivo encontrado!\n");
+        fscanf(fp, "%f %f %f %f", &informacoes_do_voo[0], &informacoes_do_voo[1], &informacoes_do_voo[2], &informacoes_do_voo[3]);
+        fscanf(fp, "%d", &tamanho_lista_passageiros);
+        lista_passageiros = realocar_passageiros(lista_passageiros, tamanho_lista_passageiros);
+        for (int i = 0; i < tamanho_lista_passageiros; i++){
+            printf("alo");
+            lista_passageiros[i] = registrar_passageiro(fp);
         }
         fclose(fp);
     }
     char comando[3] = "NA";
     while (strcmp(comando, "FD") != 0 && strcmp(comando, "FV") != 0){
         scanf("%s", comando);
-        if (!strcmp(comando, "RR")){
+        if (!strcmp(comando, "AV")){
+            scanf("%f %f %f", &informacoes_do_voo[0], &informacoes_do_voo[1], &informacoes_do_voo[2]);
+        }
+        else if (!strcmp(comando, "RR")){
             tamanho_lista_passageiros++;
             lista_passageiros = realocar_passageiros(lista_passageiros, tamanho_lista_passageiros);
-            lista_passageiros[tamanho_lista_passageiros - 1] = registrar_passageiro();
+            lista_passageiros[tamanho_lista_passageiros - 1] = registrar_passageiro(NULL);
+            informacoes_do_voo[3] += lista_passageiros[tamanho_lista_passageiros - 1].valor;
         }
         else if (!strcmp(comando, "CR")){
-            char cpf[12];
+            char *cpf = malloc(100 * sizeof(char));
             scanf("%s", cpf);
+            cpf = enxutar_string(cpf);
             int indice = acharCPF(cpf, lista_passageiros, tamanho_lista_passageiros);
-            imprimirPassageiro(indice, lista_passageiros);
+            if (indice == -1) printf("cpf nao encontrado\n");
+            else imprimirPassageiro(lista_passageiros[indice]);
+            free(cpf);
+        }
+        else if (!strcmp(comando, "FD")){
+            FILE *fp = fopen("dados.txt", "w");
+            if (fp == NULL) printf("FP ta nulo!\n");
+            fprintf(fp, "%.0f %.2f %.2f %.2f\n", informacoes_do_voo[0], informacoes_do_voo[1], informacoes_do_voo[2], informacoes_do_voo[3]);
+            fprintf(fp, "%d\n", tamanho_lista_passageiros);
+            printf("Fechamento do dia:\n");
+            printf("Quantidade de reservas: %d\n", tamanho_lista_passageiros);
+            printf("Posição: %f\n", informacoes_do_voo[3]);
+            for (int i = 0; i < tamanho_lista_passageiros; i++){
+                f_imprimirPassageiro(fp, lista_passageiros[i]);
+            }
+            fclose(fp);
         }
     }
     /*FILE *fp;
