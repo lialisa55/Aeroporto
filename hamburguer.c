@@ -23,7 +23,7 @@ void imprimirPassageiro(passageiro pessoa, char *modo);
 void f_imprimirPassageiro(FILE *fp, passageiro pessoa);
 int acharCPF(char * cpf, passageiro *lista_passageiros, int tamanho_lista_passageiros);
 void salvarDados(FILE *fp, float informacoes_do_voo[4], int tamanho_lista_passageiros, passageiro *lista_passageiros);
-void lerDadosSalvos(FILE *fp, float informacoes_do_voo[4], int tamanho_lista_passageiros, passageiro *ista_passageiros);
+void lerDadosSalvos(FILE *fp, float informacoes_do_voo[4], int *tamanho_lista_passageiros, passageiro **lista_passageiros);
 
 char *alocar_string(int x){
     char *b = malloc(x * sizeof(char));
@@ -163,19 +163,23 @@ int acharCPF(char * cpf, passageiro *lista_passageiros, int tamanho_lista_passag
 }
 
 void salvarDados(FILE *fp, float informacoes_do_voo[4], int tamanho_lista_passageiros, passageiro *lista_passageiros){
+    printf("vai");
     fprintf(fp, "%.0f %.2f %.2f %.2f\n", informacoes_do_voo[0], informacoes_do_voo[1], informacoes_do_voo[2], informacoes_do_voo[3]);
+    printf(" tomar");
     fprintf(fp, "%d\n", tamanho_lista_passageiros);
+    printf("no");
     for (int i = 0; i < tamanho_lista_passageiros; i++){
         f_imprimirPassageiro(fp, lista_passageiros[i]);
     }
+    printf("cu");
 }
 
-void lerDadosSalvos(FILE *fp, float informacoes_do_voo[4], int tamanho_lista_passageiros, passageiro *lista_passageiros){
+void lerDadosSalvos(FILE *fp, float informacoes_do_voo[4], int *tamanho_lista_passageiros, passageiro **lista_passageiros){
     fscanf(fp, "%f %f %f %f", &informacoes_do_voo[0], &informacoes_do_voo[1], &informacoes_do_voo[2], &informacoes_do_voo[3]);
-    fscanf(fp, "%d", &tamanho_lista_passageiros);
-    lista_passageiros = realocar_passageiros(lista_passageiros, tamanho_lista_passageiros);
-    for (int i = 0; i < tamanho_lista_passageiros; i++){
-        lista_passageiros[i] = registrar_passageiro(fp);
+    fscanf(fp, "%d", tamanho_lista_passageiros);
+    *lista_passageiros = realocar_passageiros(*lista_passageiros, *tamanho_lista_passageiros);
+    for (int i = 0; i < *tamanho_lista_passageiros; i++){
+        (*lista_passageiros)[i] = registrar_passageiro(fp);
     }
 }
 
@@ -186,7 +190,7 @@ int main (void){
     FILE *fp = fopen("dados.txt", "r");
     if (fp != NULL){ //le dados salvos anteriormente (caso nao esteja claro o suficiente pra voce :)))))))))))))))))))))))))
         printf("arquivo encontrado!\n");
-        lerDadosSalvos(fp, informacoes_do_voo, tamanho_lista_passageiros, lista_passageiros);
+        lerDadosSalvos(fp, informacoes_do_voo, &tamanho_lista_passageiros, &lista_passageiros);
         fclose(fp);
     }
     char comando[3] = "NA";
