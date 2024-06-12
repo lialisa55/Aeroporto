@@ -172,7 +172,7 @@ void salvarDados(FILE *fp, float informacoes_do_voo[4], int tamanho_lista_passag
 
 void lerDadosSalvos(FILE *fp, float informacoes_do_voo[4], int *tamanho_lista_passageiros, passageiro **lista_passageiros){
     fscanf(fp, "%f %f %f %f", &informacoes_do_voo[0], &informacoes_do_voo[1], &informacoes_do_voo[2], &informacoes_do_voo[3]);
-    fscanf(fp, "%d", tamanho_lista_passageiros);
+    fscanf(fp, "%d", tamanho_lista_passageiros);f
     *lista_passageiros = realocar_passageiros(*lista_passageiros, *tamanho_lista_passageiros);
     for (int i = 0; i < *tamanho_lista_passageiros; i++){
         (*lista_passageiros)[i] = registrar_passageiro(fp);
@@ -216,7 +216,10 @@ int main (void){
             lista_passageiros = realocar_passageiros(lista_passageiros, tamanho_lista_passageiros);
             lista_passageiros[tamanho_lista_passageiros - 1] = registrar_passageiro(NULL);
             informacoes_do_voo[3] += lista_passageiros[tamanho_lista_passageiros - 1].valor;
-            if (tamanho_lista_passageiros == informacoes_do_voo[0]) fechamentoVoo(informacoes_do_voo, tamanho_lista_passageiros, lista_passageiros);
+            if (tamanho_lista_passageiros == informacoes_do_voo[0]){
+                comando = "FD";
+                fechamentoVoo(informacoes_do_voo, tamanho_lista_passageiros, lista_passageiros);
+            }
         }
         else if (!strcmp(comando, "MR")){
             char cpf[100];
