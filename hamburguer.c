@@ -7,7 +7,7 @@
 
 struct Passageiro
 {
-    char *nome, *sobrenome, *cpf, *assento, *classe, *origem, *destino, *numero_voo;
+    char nome[40], sobrenome[40], cpf[15], assento[6], classe[15], origem[4], destino[4], numero_voo[8];
     float valor;
     int data[3];
 };
@@ -17,7 +17,7 @@ void imprimirPassageiro(passageiro pessoa, char *modo);
 char *alocar_string(int x);
 passageiro *realocar_passageiros(passageiro *p, int x);
 char *enxutarString(char *a);
-passageiro registrar_passageiro(FILE *fp);
+passageiro registrar_passageiro();
 void fechamentoVoo(float informacoes_do_voo[4], int tamanho_lista_passageiros, passageiro *lista_passageiros);
 void imprimirPassageiro(passageiro pessoa, char *modo);
 void f_imprimirPassageiro(FILE *fp, passageiro pessoa);
@@ -58,43 +58,17 @@ char *enxutarString(char *a){
     return b;
 }
 /*chamado pelo comando RR*/
-passageiro registrar_passageiro(FILE *fp){ //se fp for NULL, use scanf normal
+passageiro registrar_passageiro(){ //se fp for NULL, use scanf normal
     passageiro persona;
-    persona.nome = alocar_string(100);
-    persona.sobrenome = alocar_string(100);
-    persona.cpf = alocar_string(100);
-    persona.numero_voo = alocar_string(100);
-    persona.assento = alocar_string(100);
-    persona.classe = alocar_string(100);
-    persona.origem = alocar_string(100);
-    persona.destino = alocar_string(100);
-    persona.numero_voo = alocar_string(100);
-    if (fp != NULL){
-        fscanf(fp, "%s %s %s %d %d %d %s %s %s %f %s %s",
-        persona.nome, persona.sobrenome, persona.cpf, &persona.data[0], 
-        &persona.data[1], &persona.data[2], persona.numero_voo, persona.assento, persona.classe, &persona.valor, persona.origem, persona.destino);
-    }
-    else{
-        scanf("%s %s %s %d %d %d %s %s %s %f %s %s",
-        persona.nome, persona.sobrenome, persona.cpf, &persona.data[0], 
-        &persona.data[1], &persona.data[2], persona.numero_voo, persona.assento, persona.classe, &persona.valor, persona.origem, persona.destino);
-    }
-    persona.nome = enxutarString(persona.nome);
-    persona.sobrenome = enxutarString(persona.sobrenome);
-    persona.cpf = enxutarString(persona.cpf);
-    persona.numero_voo = enxutarString(persona.numero_voo);
-    persona.assento = enxutarString(persona.assento);
-    persona.classe = enxutarString(persona.classe);
-    persona.origem = enxutarString(persona.origem);
-    persona.destino = enxutarString(persona.destino);
-    persona.numero_voo = enxutarString(persona.numero_voo);
+    scanf("%s %s %s %d %d %d %s %s %s %f %s %s",
+    persona.nome, persona.sobrenome, persona.cpf, &persona.data[0], &persona.data[1], &persona.data[2], persona.numero_voo, persona.assento, persona.classe, &persona.valor, persona.origem, persona.destino);
     return persona;
 }
 
 /*chamado pelo comando FV*/
 void fechamentoVoo(float informacoes_do_voo[4], int tamanho_lista_passageiros, passageiro *lista_passageiros) {
     //qtdPassageiros é obtido por uma váriavel que é incrimentada quando chama o comando RR;
-    FILE *fp = fopen("dados.txt", "w");
+    FILE *fp = fopen("dados.txt", "wb");
     salvarDados(fp, informacoes_do_voo, tamanho_lista_passageiros, lista_passageiros);
     //Ainda não sei como achar essa parte específica no arquivo;
     //MAS EU SEI KKKKKKKKKKKK
@@ -107,21 +81,6 @@ void fechamentoVoo(float informacoes_do_voo[4], int tamanho_lista_passageiros, p
     printf("Valor Total: %.2f\n", informacoes_do_voo[3]);
     printf("--------------------------------------------------");
     fclose(fp);
-}
-
-/*chamado pelo comando FD*/
-void fechamentoDia(FILE *arquivo, int qtdReservas) {
-     //qtdReservas é obtido por uma váriavel que é incrimentada quando chama o comando RR;
-    arquivo = fopen("nomeDoArquivo.txt", "r");
-    float valorTotal;
-    fscanf(arquivo, "%f", &valorTotal);
-    //Ainda não sei como achar essa parte específica no arquivo;
-    printf("--------------------------------------------------\n");
-    printf("Fechamento do dia:\n");
-    printf("Quantidade de reservas: %d\n", qtdReservas);
-    printf("Posição: %.2f\n", valorTotal);
-    printf("--------------------------------------------------");
-    fclose(arquivo);
 }
 
 void imprimirPassageiro(passageiro pessoa, char *modo){
@@ -163,20 +122,16 @@ int acharCPF(char * cpf, passageiro *lista_passageiros, int tamanho_lista_passag
 }
 
 void salvarDados(FILE *fp, float informacoes_do_voo[4], int tamanho_lista_passageiros, passageiro *lista_passageiros){
-    fprintf(fp, "%.0f %.2f %.2f %.2f\n", informacoes_do_voo[0], informacoes_do_voo[1], informacoes_do_voo[2], informacoes_do_voo[3]);
-    fprintf(fp, "%d\n", tamanho_lista_passageiros);
-    for (int i = 0; i < tamanho_lista_passageiros; i++){
-        f_imprimirPassageiro(fp, lista_passageiros[i]);
-    }
+    fwrite(informacoes_do_voo, sizeof(float), 4, fp);
+    fwrite(&tamanho_lista_passageiros, sizeof(int), 1, fp);
+    fwrite(lista_passageiros, sizeof(passageiro), tamanho_lista_passageiros, fp);
 }
 
 void lerDadosSalvos(FILE *fp, float informacoes_do_voo[4], int *tamanho_lista_passageiros, passageiro **lista_passageiros){
-    fscanf(fp, "%f %f %f %f", &informacoes_do_voo[0], &informacoes_do_voo[1], &informacoes_do_voo[2], &informacoes_do_voo[3]);
-    fscanf(fp, "%d", tamanho_lista_passageiros);
+    fread(informacoes_do_voo, sizeof(float), 4, fp);
+    fread(tamanho_lista_passageiros, sizeof(int), 1, fp);
     *lista_passageiros = realocar_passageiros(*lista_passageiros, *tamanho_lista_passageiros);
-    for (int i = 0; i < *tamanho_lista_passageiros; i++){
-        (*lista_passageiros)[i] = registrar_passageiro(fp);
-    }
+    fread(*lista_passageiros, sizeof(passageiro), *tamanho_lista_passageiros, fp);
 }
 
 
@@ -199,7 +154,7 @@ int main (void){
     float informacoes_do_voo[4] = {0};
     passageiro *lista_passageiros = NULL;
     int tamanho_lista_passageiros = 0;
-    FILE *fp = fopen("dados.txt", "r");
+    FILE *fp = fopen("dados.txt", "rb");
     if (fp != NULL){ //le dados salvos anteriormente (caso nao esteja claro o suficiente pra voce :)))))))))))))))))))))))))
         printf("arquivo encontrado!\n");
         lerDadosSalvos(fp, informacoes_do_voo, &tamanho_lista_passageiros, &lista_passageiros);
@@ -214,9 +169,12 @@ int main (void){
         else if (!strcmp(comando, "RR")){ //adiciona um passageiro a lista_passageiros
             tamanho_lista_passageiros++;
             lista_passageiros = realocar_passageiros(lista_passageiros, tamanho_lista_passageiros);
-            lista_passageiros[tamanho_lista_passageiros - 1] = registrar_passageiro(NULL);
+            lista_passageiros[tamanho_lista_passageiros - 1] = registrar_passageiro();
             informacoes_do_voo[3] += lista_passageiros[tamanho_lista_passageiros - 1].valor;
-            if (tamanho_lista_passageiros == informacoes_do_voo[0]) fechamentoVoo(informacoes_do_voo, tamanho_lista_passageiros, lista_passageiros);
+            if (tamanho_lista_passageiros == informacoes_do_voo[0]){
+                strcpy(comando, "FV");
+                fechamentoVoo(informacoes_do_voo, tamanho_lista_passageiros, lista_passageiros);
+            }
         }
         else if (!strcmp(comando, "MR")){
             char cpf[100];
@@ -226,10 +184,6 @@ int main (void){
                 printf("cpf nao encontrado \n");
                 continue;
             }
-            free(lista_passageiros[indice].nome);
-            free(lista_passageiros[indice].sobrenome);
-            lista_passageiros[indice].nome = alocar_string(100);
-            lista_passageiros[indice].sobrenome = alocar_string(100);
             scanf("%s %s %s %s", lista_passageiros[indice].nome, lista_passageiros[indice].sobrenome, lista_passageiros[indice].cpf, lista_passageiros[indice].assento);
         }
         else if (!strcmp(comando, "CR")){ //encontra um cpf e imprime as informacoes de seu dono
@@ -247,7 +201,7 @@ int main (void){
             deletarCPF(indice, &lista_passageiros, &tamanho_lista_passageiros, informacoes_do_voo);
         }
         else if (!strcmp(comando, "FD")){ //encerra o programa e salva as informacoes obtidas
-            FILE *fp = fopen("dados.txt", "w");
+            FILE *fp = fopen("dados.txt", "wb");
             if (fp == NULL) printf("FP ta nulo!\n");
             printf("Fechamento do dia:\n");
             printf("Quantidade de reservas: %d\n", tamanho_lista_passageiros);
