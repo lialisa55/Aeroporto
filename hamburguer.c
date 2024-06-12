@@ -163,15 +163,11 @@ int acharCPF(char * cpf, passageiro *lista_passageiros, int tamanho_lista_passag
 }
 
 void salvarDados(FILE *fp, float informacoes_do_voo[4], int tamanho_lista_passageiros, passageiro *lista_passageiros){
-    printf("vai");
     fprintf(fp, "%.0f %.2f %.2f %.2f\n", informacoes_do_voo[0], informacoes_do_voo[1], informacoes_do_voo[2], informacoes_do_voo[3]);
-    printf(" tomar");
     fprintf(fp, "%d\n", tamanho_lista_passageiros);
-    printf("no");
     for (int i = 0; i < tamanho_lista_passageiros; i++){
         f_imprimirPassageiro(fp, lista_passageiros[i]);
     }
-    printf("cu");
 }
 
 void lerDadosSalvos(FILE *fp, float informacoes_do_voo[4], int *tamanho_lista_passageiros, passageiro **lista_passageiros){
@@ -180,6 +176,22 @@ void lerDadosSalvos(FILE *fp, float informacoes_do_voo[4], int *tamanho_lista_pa
     *lista_passageiros = realocar_passageiros(*lista_passageiros, *tamanho_lista_passageiros);
     for (int i = 0; i < *tamanho_lista_passageiros; i++){
         (*lista_passageiros)[i] = registrar_passageiro(fp);
+    }
+}
+
+
+void deletarCPF(int indice, passageiro **lista_passageiros, int *tamanho_lista_passageiros, float informacoes_do_voo[4]){
+    if (indice < 0 || indice >= *tamanho_lista_passageiros){
+        printf("cpf invalido\n");
+        return;
+    }
+    informacoes_do_voo[3] -= (*lista_passageiros)[indice].valor;
+    (*tamanho_lista_passageiros)--;
+    (*lista_passageiros)[indice] = (*lista_passageiros)[*tamanho_lista_passageiros];
+    if (*tamanho_lista_passageiros > 1) *lista_passageiros = realocar_passageiros(*lista_passageiros, *tamanho_lista_passageiros);
+    else{
+        free(*lista_passageiros);
+        *lista_passageiros = NULL;
     }
 }
 
@@ -204,16 +216,35 @@ int main (void){
             lista_passageiros = realocar_passageiros(lista_passageiros, tamanho_lista_passageiros);
             lista_passageiros[tamanho_lista_passageiros - 1] = registrar_passageiro(NULL);
             informacoes_do_voo[3] += lista_passageiros[tamanho_lista_passageiros - 1].valor;
+            if (tamanho_lista_passageiros == informacoes_do_voo[0]) fechamentoVoo(informacoes_do_voo, tamanho_lista_passageiros, lista_passageiros);
+        }
+        else if (!strcmp(comando, "MR")){
+            char cpf[100];
+            scanf("%s", cpf);
+            int indice = acharCPF(cpf, lista_passageiros, tamanho_lista_passageiros);
+            if (indice == -1){
+                printf("cpf nao encontrado \n");
+                continue;
+            }
+            free(lista_passageiros[indice].nome);
+            free(lista_passageiros[indice].sobrenome);
+            lista_passageiros[indice].nome = alocar_string(100);
+            lista_passageiros[indice].sobrenome = alocar_string(100);
+            scanf("%s %s %s %s", lista_passageiros[indice].nome, lista_passageiros[indice].sobrenome, lista_passageiros[indice].cpf, lista_passageiros[indice].assento);
         }
         else if (!strcmp(comando, "CR")){ //encontra um cpf e imprime as informacoes de seu dono
-            char *cpf = malloc(100 * sizeof(char));
+            char cpf[100];
             scanf("%s", cpf);
-            cpf = enxutarString(cpf);
             int indice = acharCPF(cpf, lista_passageiros, tamanho_lista_passageiros);
             if (indice == -1) printf("\ncpf nao encontrado\n");
             else imprimirPassageiro(lista_passageiros[indice], "longo");
             printf("--------------------------------------------------\n");
-            free(cpf);
+        }
+        else if (!strcmp(comando, "CA")){
+            char cpf[100];
+            scanf("%s", cpf);
+            int indice = acharCPF(cpf, lista_passageiros, tamanho_lista_passageiros);
+            deletarCPF(indice, &lista_passageiros, &tamanho_lista_passageiros, informacoes_do_voo);
         }
         else if (!strcmp(comando, "FD")){ //encerra o programa e salva as informacoes obtidas
             FILE *fp = fopen("dados.txt", "w");
