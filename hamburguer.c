@@ -5,23 +5,26 @@
 #include <stdlib.h>
 #include <string.h>
 
-struct Passageiro
-{
+struct Passageiro {
     char *nome, *sobrenome, *cpf, *assento, *classe, *origem, *destino, *numero_voo;
     float valor;
     int data[3];
 };
 typedef struct Passageiro passageiro;
 
-void imprimirPassageiro(passageiro pessoa, char *modo);
 char *alocar_string(int x);
-passageiro *realocar_passageiros(passageiro *p, int x);
 char *enxutarString(char *a);
+passageiro *realocar_passageiros(passageiro *p, int x);
+void registrar_novo_voo(float informacoes_do_voo[3]); //Ainda não finalizado
 passageiro registrar_passageiro(FILE *fp);
+void imprimirPassageiro(passageiro pessoa, char *modo);
+int acharCPF(char * cpf, passageiro *lista_passageiros, int tamanho_lista_passageiros);
+void fechamentoDia(FILE *arquivo, int qtdReservas); // Ainda não finalizado
+void deletarCPF(int indice, passageiro **lista_passageiros, int *tamanho_lista_passageiros, float informacoes_do_voo[4]) //Ainda não finalizado
 void fechamentoVoo(float informacoes_do_voo[4], int tamanho_lista_passageiros, passageiro *lista_passageiros);
+void deletarCPF(int indice, passageiro **lista_passageiros, int *tamanho_lista_passageiros, float informacoes_do_voo[4])
 void imprimirPassageiro(passageiro pessoa, char *modo);
 void f_imprimirPassageiro(FILE *fp, passageiro pessoa);
-int acharCPF(char * cpf, passageiro *lista_passageiros, int tamanho_lista_passageiros);
 void salvarDados(FILE *fp, float informacoes_do_voo[4], int tamanho_lista_passageiros, passageiro *lista_passageiros);
 void lerDadosSalvos(FILE *fp, float informacoes_do_voo[4], int *tamanho_lista_passageiros, passageiro **lista_passageiros);
 
@@ -57,6 +60,7 @@ char *enxutarString(char *a){
     }
     return b;
 }
+
 /*chamado pelo comando RR*/
 passageiro registrar_passageiro(FILE *fp){ //se fp for NULL, use scanf normal
     passageiro persona;
@@ -262,6 +266,8 @@ int main (void){
         else if (!strcmp(comando, "FV")){
             fechamentoVoo(informacoes_do_voo, tamanho_lista_passageiros, lista_passageiros);
         }
+
+        return 0;
     }
     /*FILE *fp;
     fp = fopen("file.txt", "w+");
