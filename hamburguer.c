@@ -75,7 +75,11 @@ passageiro *realocar_passageiros(passageiro *p, int x){
     return b;
 }
 
-/*chamado pelo comando AV*/
+/*
+Chamada pelo comando AV,
+ela é responsavel por fazer o usuario insrir as informações básicas referentes ao voo 
+Entrada: 
+*/
 void registrar_novo_voo(float informacoes_do_voo[3]){
     scanf("%f %f %f", &informacoes_do_voo[0], &informacoes_do_voo[1], &informacoes_do_voo[2]);
     //insira jeito de registrar num arquivo
@@ -95,7 +99,12 @@ char *enxutarString(char *a){
     return b;
 }
 
-/*chamado pelo comando RR*/
+/*
+chamada pelo comando RR,
+função responsável por registrar um novo passageiro com dados passados pelos usuários
+Entrada:
+Saída:
+*/
 passageiro registrar_passageiro(FILE *fp){ //se fp for NULL, use scanf normal
     passageiro persona;
     persona.nome = alocar_string(100);
@@ -129,7 +138,11 @@ passageiro registrar_passageiro(FILE *fp){ //se fp for NULL, use scanf normal
     return persona;
 }
 
-/*chamado pelo comando FV*/
+/*
+chamada pelo comando FV,
+essa funcao fecha o voo e encerra o programa, imprimindo informacoes como o numero de passageiros e o valor total das passagens 
+Entrada: 
+*/
 void fechamentoVoo(float informacoes_do_voo[4], int tamanho_lista_passageiros, passageiro *lista_passageiros) {
     //qtdPassageiros é obtido por uma váriavel que é incrimentada quando chama o comando RR;
     FILE *fp = fopen("dados.txt", "w");
@@ -147,7 +160,11 @@ void fechamentoVoo(float informacoes_do_voo[4], int tamanho_lista_passageiros, p
     fclose(fp);
 }
 
-/*chamado pelo comando FD*/
+/*
+chamada pelo comando FD
+ela fecha o dia e encerra o programa, printando dados como posicao e quantidade de reservas feitas até então
+Entrada:
+*/
 void fechamentoDia(FILE *arquivo, int qtdReservas) {
      //qtdReservas é obtido por uma váriavel que é incrimentada quando chama o comando RR;
     arquivo = fopen("nomeDoArquivo.txt", "r");
@@ -162,6 +179,7 @@ void fechamentoDia(FILE *arquivo, int qtdReservas) {
     fclose(arquivo);
 }
 
+/*Responsável por 
 void imprimirPassageiro(passageiro pessoa, char *modo){
     if (!strcmp(modo, "curto")){
         printf("%s\n", pessoa.cpf);
