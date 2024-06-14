@@ -20,13 +20,14 @@ Porém, quando o voo é fechado os dados são salvos e nao pode ser mais modific
 #include <stdlib.h>
 #include <string.h>
 
-struct Passageiro {
+struct Passageiro { /*Dado do tipo passageiro com suas especificações*/
     char *nome, *sobrenome, *cpf, *assento, *classe, *origem, *destino, *numero_voo;
     float valor;
     int data[3];
 };
 typedef struct Passageiro passageiro;
 
+/*Delacração prévia das funções usadas no código*/
 char *alocar_string(int x);
 char *enxutarString(char *a);
 passageiro *realocar_passageiros(passageiro *p, int x);
@@ -43,6 +44,11 @@ void f_imprimirPassageiro(FILE *fp, passageiro pessoa);
 void salvarDados(FILE *fp, float informacoes_do_voo[4], int tamanho_lista_passageiros, passageiro *lista_passageiros);
 void lerDadosSalvos(FILE *fp, float informacoes_do_voo[4], int *tamanho_lista_passageiros, passageiro **lista_passageiros);
 
+/*
+Essa função aloca strings, como por exemplo o nome do passageiro
+Entrada: x - Valor que representas quantos caracteres serão alocados
+Saída: b - Espaço alocado que será atibuido a string em questão
+*/
 char *alocar_string(int x){
     char *b = malloc(x * sizeof(char));
     if (b == NULL){
@@ -52,6 +58,14 @@ char *alocar_string(int x){
     return b;
 }
 
+/*
+Essa função realoca o vetor de structs passageiro,
+Quando o comando RR é chamado antes de executar a função de registrar
+um passageiro o vetor é realocado para que possa ser liberado espaço na memória 
+Entradas: *p - Representa a lista de passageiros
+           x - tamanho a ser realocado
+Saída: b - Espaço realocado que será atibuido ao vetor em questão
+*/
 passageiro *realocar_passageiros(passageiro *p, int x){
     passageiro *b = realloc(p, x * sizeof(passageiro));
     if (b == NULL){
@@ -67,6 +81,11 @@ void registrar_novo_voo(float informacoes_do_voo[3]){
     //insira jeito de registrar num arquivo
 }
 
+/*
+Essa função realoca strings, por exemplo o nome do passageiro, para não ocupar mais memória que o necessário
+Entrada: a - String a ser realocada
+Saída: b - Espaço realocado que será atibuido a string em questão
+*/
 char *enxutarString(char *a){
     char *b = realloc(a, (strlen(a) + 1) * sizeof(char));
     if (b == NULL){
