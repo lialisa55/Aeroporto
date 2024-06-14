@@ -4,8 +4,15 @@ Autores: Joao Victor Alonso de Mello(turmaB),
          Natália Monalisa Coelho Mota(turmaA),
          Renan Banci Catarin(turmaB) (2004)
 
-Objetivo: o programa a seguir informatiza n 
+Objetivo: o código a seguir foi criado com o intuito de informatizar
+um sistema de cadastro de passageiros para uma companhia aérea.
+Como as especificações do projeto ordenam, o sistema não é complexo,
+funcionando apenas para um único voo de trecho simples,
+além de a reserva de passageiros ser feita individualmente.
+Também é possível Consultar, Modificar e Cancelar uma reserva
 
+Sobre os voos, quando um dia é fechado os dados salvos podem ser reabertos em um outro dia para receberem modificações.
+Porém, quando o voo é fechado os dados são salvos e nao pode ser mais modificado.
 */
 
 //TODO: fazer a funcao fechar voo fechar permanentemente o voo, implementar o limite de reservas.
