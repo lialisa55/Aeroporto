@@ -1,5 +1,13 @@
-//banco de dados para Voos
-//autores: Renan Baci Catarin, Monalisa, joao mello, onlinegdb.com
+/*
+Banco de dados para Voos
+Autores: Joao Victor Alonso de Mello(turmaB), 
+         Natália Monalisa Coelho Mota(turmaA),
+         Renan Banci Catarin(turmaB) (2004)
+
+Objetivo: o programa a seguir informatiza n 
+
+*/
+
 //TODO: fazer a funcao fechar voo fechar permanentemente o voo, implementar o limite de reservas.
 #include <stdio.h>
 #include <stdlib.h>
