@@ -1,3 +1,4 @@
+//Falta modularizar as funções de saída e liberar a memória
 /*Banco de dados para Voosfiz 
 Projeto final do curso de Introdução à Ciência da Computação I, 2024.
 Autores: Joao Victor Alonso de Mello(turmaB), 
