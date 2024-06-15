@@ -30,7 +30,7 @@ typedef struct passageiro{
 //Declaração das funções que serão usadas no código
 char *alocStr(int x);
 char *realocStr(char *a);
-Passageiro registrar_passageiro();
+Passageiro lerPassageiro();
 
 Passageiro *realocar_passageiros(Passageiro *p, int x);
 void imprimirPassageiro(Passageiro pessoa, char *modo);
@@ -45,41 +45,6 @@ void registrarPassageiro(Passageiro **lista , int *n, float infoVoo[4]);
 void consultarReserva(Passageiro *lista, int n);
 void cancelarReserva(Passageiro **lista ,int *n, float infoVoo[4]);
 void modificarReserva(Passageiro *lista, int n);
-/*
-Chamada pelo comando RR,
-função responsável por registrar um novo passageiro com dados passados pelos usuários
-Entrada: nenhuma
-Saída: p - representa o novo passageiro com os valores corretos atgribuídos
-*/
-Passageiro registrar_passageiro(void){
-    Passageiro p;
-
-    //Alocando os dados necessários
-    p.nome = alocStr(40);
-    p.sobrenome = alocStr(40);
-    p.assento = alocStr(6);
-    p.classe = alocStr(15);
-    p.origem = alocStr(4);
-    p.destino = alocStr(4);
-    p.numero_voo = alocStr(8);
-
-    //Leitura dos dados
-    scanf("%s %s %s %d %d %d %s %s %s %f %s %s",
-     p.nome, p.sobrenome, p.cpf, &p.data[0],
-     &p.data[1], &p.data[2], p.numero_voo, p.assento, 
-     p.classe, &p.valor, p.origem, p.destino);
-    
-    //Realocação dos dados
-    p.nome = realocStr(p.nome);
-    p.sobrenome = realocStr(p.sobrenome);
-    p.assento = realocStr(p.assento);
-    p.classe = realocStr(p.classe);
-    p.origem = realocStr(p.origem);
-    p.destino = realocStr(p.destino);
-    p.numero_voo = realocStr(p.numero_voo);
-    
-    return p;
-}
 
 /*
 Chamada pelo comando FV e também quando o numero de passageiros cadastrado atinge o número de assentos disponíveis,
@@ -260,7 +225,7 @@ void abrirVoo(float infoVoo[4]) {
 void registrarPassageiro(Passageiro **lista , int *n, float infoVoo[4]) {
     (*n)++;
     *lista = realocar_passageiros(*lista, *n);
-    *lista[*n - 1] = registrar_passageiro();
+    (*lista)[*n - 1] = lerPassageiro();
     infoVoo[3] += (*lista)[*n - 1].valor;
     // if (tamanho_lista_passageiros == informacoes_do_voo[0]){
     //     strcpy(comando, "FV");
@@ -297,7 +262,7 @@ void cancelarReserva(Passageiro **lista ,int *n, float infoVoo[4]) {
         return;
     }
 
-    infoVoo[3] -= lista[indice]->valor;
+    infoVoo[3] -= (*lista)[indice].valor;
     (*n)--;
 
     for (int i = indice; i < *n; i++) (*lista)[i] = (*lista)[i + 1];
@@ -341,23 +306,58 @@ int acharCPF(char cpf[15], Passageiro *lista_passageiros, int tamanho_lista_pass
 }
 
 /*
+função responsável por registrar um novo passageiro com dados passados pelos usuários
+Entrada: nenhuma
+Saída: p - representa o novo passageiro com os valores corretos atgribuídos
+*/
+Passageiro lerPassageiro(void){
+    Passageiro p;
+
+    //Alocando os dados necessários
+    p.nome = alocStr(40);
+    p.sobrenome = alocStr(40);
+    p.assento = alocStr(6);
+    p.classe = alocStr(15);
+    p.origem = alocStr(4);
+    p.destino = alocStr(4);
+    p.numero_voo = alocStr(8);
+
+    //Leitura dos dados
+    scanf("%s %s %s %d %d %d %s %s %s %f %s %s",
+     p.nome, p.sobrenome, p.cpf, &p.data[0],
+     &p.data[1], &p.data[2], p.numero_voo, p.assento, 
+     p.classe, &p.valor, p.origem, p.destino);
+    
+    //Realocação dos dados
+    p.nome = realocStr(p.nome);
+    p.sobrenome = realocStr(p.sobrenome);
+    p.assento = realocStr(p.assento);
+    p.classe = realocStr(p.classe);
+    p.origem = realocStr(p.origem);
+    p.destino = realocStr(p.destino);
+    p.numero_voo = realocStr(p.numero_voo);
+    
+    return p;
+}
+
+/*
 Funcao para consultar reserva, chamada pelo comando CR
 Entrada: 
 */
-void imprimirPassageiro(Passageiro pessoa, char *modo){
+void imprimirPassageiro(Passageiro p, char *modo){
     if (!strcmp(modo, "curto")){
-        printf("%s\n", pessoa.cpf);
-        printf("%s %s\n", pessoa.nome, pessoa.sobrenome);
-        printf("%s\n\n", pessoa.assento);
+        printf("%s\n", p.cpf);
+        printf("%s %s\n", p.nome, p.sobrenome);
+        printf("%s\n\n", p.assento);
     }
     else{
-        printf("%s\n", pessoa.cpf);
-        printf("%s %s\n", pessoa.nome, pessoa.sobrenome);
-        printf("%d/%d/%d\n", pessoa.data[0], pessoa.data[1], pessoa.data[2]);
-        printf("Voo: %s\n", pessoa.numero_voo);
-        printf("Assento: %s\n", pessoa.assento);
-        printf("Classe: %s\n", pessoa.classe);
-        printf("Trecho: %s %s\n", pessoa.origem, pessoa.destino);
-        printf("Valor: %.02f\n", pessoa.valor);
+        printf("%s\n", p.cpf);
+        printf("%s %s\n", p.nome, p.sobrenome);
+        printf("%d/%d/%d\n", p.data[0], p.data[1], p.data[2]);
+        printf("Voo: %s\n", p.numero_voo);
+        printf("Assento: %s\n", p.assento);
+        printf("Classe: %s\n", p.classe);
+        printf("Trecho: %s %s\n", p.origem, p.destino);
+        printf("Valor: %.02f\n", p.valor);
     }
 }
