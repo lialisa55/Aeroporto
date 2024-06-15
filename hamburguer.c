@@ -28,7 +28,7 @@ typedef struct passageiro{
 } Passageiro;
 
 //Declaração das funções que serão usadas no código
-char *alocString(int x);
+char *alocStr(int x);
 char *realocStr(char *a);
 Passageiro registrar_passageiro();
 Passageiro *realocar_passageiros(Passageiro *p, int x);
@@ -44,7 +44,7 @@ Essa função aloca strings, como por exemplo o nome do passageiro
 Entrada: x - Valor que representas quantos caracteres serão alocados
 Saída: b - Espaço alocado que será atibuido a string em questão
 */
-char *alocString(int x){
+char *alocStr(int x){
     char *b = malloc(x * sizeof(char));
     if (b == NULL){
         printf("Erro: Falha na alocacao de memoria");
@@ -98,13 +98,13 @@ Passageiro registrar_passageiro(void){
     Passageiro p;
 
     //Alocando os dados necessários
-    p.nome = alocString(40);
-    p.sobrenome = alocString(40);
-    p.assento = alocString(6);
-    p.classe = alocString(15);
-    p.origem = alocString(4);
-    p.destino = alocString(4);
-    p.numero_voo = alocString(8);
+    p.nome = alocStr(40);
+    p.sobrenome = alocStr(40);
+    p.assento = alocStr(6);
+    p.classe = alocStr(15);
+    p.origem = alocStr(4);
+    p.destino = alocStr(4);
+    p.numero_voo = alocStr(8);
 
     //Leitura dos dados
     scanf("%s %s %s %d %d %d %s %s %s %f %s %s",
@@ -326,4 +326,5 @@ int main (void){
     }
     if (lista_passageiros != NULL) free(lista_passageiros);
 }
+
 
