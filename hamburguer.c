@@ -136,10 +136,12 @@ int main (void){
         printf("arquivo encontrado!\n");
         if (lerDadosSalvos(fp, informacoes_do_voo, &tamanho_lista_passageiros, &lista_passageiros)){
             fechamentoVoo(fp, informacoes_do_voo, tamanho_lista_passageiros, lista_passageiros);
+            rewind(fp);
             fclose(fp);
             free(lista_passageiros);
             return 0;
         };
+        rewind(fp);
         fclose(fp);
     }
     char comando[3] = "NA";
@@ -157,7 +159,7 @@ int main (void){
                 strcpy(comando, "FV");
                 FILE *fp = fopen("dados.bin", "wb");
                 fechamentoVoo(fp, informacoes_do_voo, tamanho_lista_passageiros, lista_passageiros);
-                fclose(fp);
+                rewind(fp);
             }
         }
         else if (!strcmp(comando, "MR")){
@@ -194,12 +196,15 @@ int main (void){
             printf("Quantidade de reservas: %d\n", tamanho_lista_passageiros);
             printf("Posição: %f\n", informacoes_do_voo[3]);
             printf("--------------------------------------------------");
+            printf("tamanho de lista: %ld\n", sizeof(passageiro) * tamanho_lista_passageiros);
             salvarDados(fp, 0, informacoes_do_voo, tamanho_lista_passageiros, lista_passageiros);
+            rewind(fp);
             fclose(fp);
         }
         else if (!strcmp(comando, "FV")){
             FILE *fp = fopen("dados.bin", "wb");
             fechamentoVoo(fp, informacoes_do_voo, tamanho_lista_passageiros, lista_passageiros);
+            rewind(fp);
             fclose(fp);
         }
     }
