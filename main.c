@@ -1,9 +1,20 @@
-/// Projeto final do curso de Introdução à Ciência da Computação I.
-// O objetivo é criar um programa para uma companhia aérea que registre a abertura de voos,
-// realize consultas, modificações e cancelamentos de reservas,
-// e também registre o fechamento dos dias e dos voos.
-// Autores: Renan Banci Catarin, Nathalia Monalisa Coelho Mota, João Victor Alonso de Mello
-// Professor: Rudinei Goularte
+/*Banco de dados para Voos
+Projeto final do curso de Introdução à Ciência da Computação I, 2024.
+Autores: Joao Victor Alonso de Mello(turmaB), 
+         Natália Monalisa Coelho Mota(turmaA),
+         Renan Banci Catarin(turmaB)
+Professor: Rudinei Goularte
+
+Objetivo: o código a seguir foi criado com o intuito de informatizar
+um sistema de cadastro de passageiros para uma companhia aérea.
+Como as especificações do projeto ordenam, o sistema não é complexo,
+funcionando apenas para um único voo de trecho simples,
+além de a reserva de passageiros ser feita individualmente.
+Também é possível Consultar, Modificar e Cancelar uma reserva
+
+Sobre os voos, quando um dia é fechado os dados salvos podem ser reabertos em um outro dia para receberem modificações.
+Porém, quando o voo é fechado os dados são salvos e nao pode ser mais modificado.
+*/
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -29,7 +40,11 @@ int acharCPF(char * cpf, passageiro *lista_passageiros, int tamanho_lista_passag
 void salvarDados(FILE *fp, int fechado, float informacoes_do_voo[4], int tamanho_lista_passageiros, passageiro *lista_passageiros);
 int lerDadosSalvos(FILE *fp, float informacoes_do_voo[4], int *tamanho_lista_passageiros, passageiro **lista_passageiros);
 
-//Função de alocar strings
+/*
+Essa função aloca strings, como por exemplo o nome do passageiro
+Entrada: x - Valor que representas quantos caracteres serão alocados
+Saída: b - Espaço alocado que será atibuido a string em questão
+*/
 char *alocar_string(int x){
     char *b = malloc(x * sizeof(char));
     if (b == NULL){
@@ -39,7 +54,14 @@ char *alocar_string(int x){
     return b;
 }
 
-//Funcao para realocar
+/*
+Essa função realoca o vetor de structs passageiro,
+Quando o comando RR é chamado antes de executar a função de registrar
+um passageiro o vetor é realocado para que possa ser liberado espaço na memória 
+Entradas: *p - Representa a lista de passageiros
+           x - tamanho a ser realocado
+Saída: b - Espaço realocado que será atibuido ao vetor em questão
+*/
 passageiro *realocar_passageiros(passageiro *p, int x){
     if (x == 0){
         free(p);
@@ -53,7 +75,12 @@ passageiro *realocar_passageiros(passageiro *p, int x){
     return b;
 }
 
-//Funcao para registrar passageiros, chamada pelo comando RR
+/*
+chamada pelo comando RR,
+função responsável por registrar um novo passageiro com dados passados pelos usuários
+Entrada:
+Saída:
+*/
 passageiro registrar_passageiro(){
     passageiro persona;
     scanf("%s %s %s %d %d %d %s %s %s %f %s %s",
@@ -61,7 +88,11 @@ passageiro registrar_passageiro(){
     return persona;
 }
 
-//Funcao para fechar voos, chamada pelo comando FV
+/*
+chamada pelo comando FV,
+essa funcao fecha o voo e encerra o programa, imprimindo informacoes como o numero de passageiros e o valor total das passagens 
+Entrada: 
+*/
 void fechamentoVoo(FILE *fp, float informacoes_do_voo[4], int tamanho_lista_passageiros, passageiro *lista_passageiros) {
     printf("Voo Fechado!\n\n");
     salvarDados(fp, 1, informacoes_do_voo, tamanho_lista_passageiros, lista_passageiros);
@@ -137,7 +168,7 @@ int main (void){
     passageiro *lista_passageiros = NULL;
     int tamanho_lista_passageiros = 0;
     FILE *fp = fopen("dados.bin", "rb");
-    if (fp != NULL){ //le dados salvos anteriormente (caso nao esteja claro o suficiente pra voce :)))))))))))))))))))))))))
+    if (fp != NULL){
         printf("arquivo encontrado!\n");
         if (lerDadosSalvos(fp, informacoes_do_voo, &tamanho_lista_passageiros, &lista_passageiros)){
             fechamentoVoo(fp, informacoes_do_voo, tamanho_lista_passageiros, lista_passageiros);
