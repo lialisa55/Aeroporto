@@ -1,4 +1,4 @@
-/*Banco de dados para Voos
+/*Banco de dados para Voosfiz 
 Projeto final do curso de Introdução à Ciência da Computação I, 2024.
 Autores: Joao Victor Alonso de Mello(turmaB), 
          Natália Monalisa Coelho Mota(turmaA),
@@ -236,7 +236,7 @@ int main (void){
         }
 
         if (!strcmp(comando, "CA")){
-            cancelarReserva();
+            cancelarReserva(&lista_passageiros, &tamanho_lista_passageiros, informacoes_do_voo);
         }
 
         if (!strcmp(comando, "FD")){ //encerra o programa e salva as informacoes obtidas
@@ -334,9 +334,9 @@ void cancelarReserva(Passageiro **lista ,int *n, float infoVoo[4]) {
     char cpf[15];
     scanf("%s", cpf);
 
-    int indice = acharCPF(cpf, lista, n);
+    int indice = acharCPF(cpf, *lista, *n);
     
-    if (indice < 0 || indice >= lista){
+    if (indice < 0 || indice >= *n){
         printf("cpf invalido\n");
         return;
     }
