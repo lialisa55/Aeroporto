@@ -1,10 +1,14 @@
-//banco de dados para Voos
-//autores: Renan Baci Catarin, Monalisa, joao mello, onlinegdb.com
-//TODO: fazer a funcao fechar voo fechar permanentemente o voo, implementar o limite de reservas.
+/// Projeto final do curso de Introdução à Ciência da Computação I.
+// O objetivo é criar um programa para uma companhia aérea que registre a abertura de voos,
+// realize consultas, modificações e cancelamentos de reservas,
+// e também registre o fechamento dos dias e dos voos.
+// Autores: Renan Banci Catarin, Nathalia Monalisa Coelho Mota, João Victor Alonso de Mello
+// Professor: Rudinei Goularte
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
+//Criação de uma estrutura para armazenar informações de passageiros
 struct Passageiro
 {
     char nome[40], sobrenome[40], cpf[15], assento[6], classe[15], origem[4], destino[4], numero_voo[8];
@@ -13,6 +17,7 @@ struct Passageiro
 };
 typedef struct Passageiro passageiro;
 
+//Declaração das funções que serão usadas no código
 void imprimirPassageiro(passageiro pessoa, char *modo);
 char *alocar_string(int x);
 passageiro *realocar_passageiros(passageiro *p, int x);
@@ -24,15 +29,17 @@ int acharCPF(char * cpf, passageiro *lista_passageiros, int tamanho_lista_passag
 void salvarDados(FILE *fp, int fechado, float informacoes_do_voo[4], int tamanho_lista_passageiros, passageiro *lista_passageiros);
 int lerDadosSalvos(FILE *fp, float informacoes_do_voo[4], int *tamanho_lista_passageiros, passageiro **lista_passageiros);
 
+//Função de alocar strings
 char *alocar_string(int x){
     char *b = malloc(x * sizeof(char));
     if (b == NULL){
-        printf("oops! hehe nao tenho memoria o suficiente senpai ;*_*;");
+        printf("Erro: Falha na alocacao de memoria");
         exit(1);
     }
     return b;
 }
 
+//Funcao para realocar
 passageiro *realocar_passageiros(passageiro *p, int x){
     if (x == 0){
         free(p);
@@ -40,13 +47,13 @@ passageiro *realocar_passageiros(passageiro *p, int x){
     }
     passageiro *b = realloc(p, x * sizeof(passageiro));
     if (b == NULL){
-        printf("oops! hehe nao tenho memoria o suficiente senpai ;*_*;");
+        printf("Erro: Falha na alocacao de memoria");
         exit(1);
     }
     return b;
 }
 
-/*chamado pelo comando RR*/
+//Funcao para registrar passageiros, chamada pelo comando RR
 passageiro registrar_passageiro(){
     passageiro persona;
     scanf("%s %s %s %d %d %d %s %s %s %f %s %s",
@@ -54,23 +61,19 @@ passageiro registrar_passageiro(){
     return persona;
 }
 
-/*chamado pelo comando FV*/
+//Funcao para fechar voos, chamada pelo comando FV
 void fechamentoVoo(FILE *fp, float informacoes_do_voo[4], int tamanho_lista_passageiros, passageiro *lista_passageiros) {
     printf("Voo Fechado!\n\n");
-    //qtdPassageiros é obtido por uma váriavel que é incrimentada quando chama o comando RR;
     salvarDados(fp, 1, informacoes_do_voo, tamanho_lista_passageiros, lista_passageiros);
-    //Ainda não sei como achar essa parte específica no arquivo;
-    //MAS EU SEI KKKKKKKKKKKK
     
     for(int i = 0; i < tamanho_lista_passageiros; i++) {
-        //Aqui tem que pegar os dados dos passageiros e printar eles. Juro que vou descobrir como;
-        //eu descobri primeiro kkkkkkkk
         imprimirPassageiro(lista_passageiros[i], "curto");
     }
     printf("Valor Total: %.2f\n", informacoes_do_voo[3]);
     printf("--------------------------------------------------");
 }
 
+//Funcao para consultar reserva, chamada pelo comando CR
 void imprimirPassageiro(passageiro pessoa, char *modo){
     if (!strcmp(modo, "curto")){
         printf("%s\n", pessoa.cpf);
@@ -89,6 +92,7 @@ void imprimirPassageiro(passageiro pessoa, char *modo){
     }
 }
 
+//Funcao que retorna o indexamento de um cpf específico
 int acharCPF(char * cpf, passageiro *lista_passageiros, int tamanho_lista_passageiros){
     for (int i = 0; i < tamanho_lista_passageiros; i++){
         if (!strcmp(lista_passageiros[i].cpf, cpf)){
@@ -97,6 +101,7 @@ int acharCPF(char * cpf, passageiro *lista_passageiros, int tamanho_lista_passag
     }
     return -1;
 }
+
 
 void salvarDados(FILE *fp, int fechado, float informacoes_do_voo[4], int tamanho_lista_passageiros, passageiro *lista_passageiros){
     fwrite(&fechado, sizeof(int), 1, fp);
