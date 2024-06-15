@@ -271,7 +271,7 @@ int main (void){
             if (fp == NULL) printf("FP ta nulo!\n");
             printf("Fechamento do dia:\n");
             printf("Quantidade de reservas: %d\n", tamanho_lista_passageiros);
-            printf("Posição: %f\n", informacoes_do_voo[3]);
+            printf("Posição: %.2f\n", informacoes_do_voo[3]);
             printf("--------------------------------------------------");
             printf("tamanho de lista: %ld\n", sizeof(passageiro) * tamanho_lista_passageiros);
             salvarDados(fp, 0, informacoes_do_voo, tamanho_lista_passageiros, lista_passageiros);
