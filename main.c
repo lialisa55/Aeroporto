@@ -89,7 +89,7 @@ passageiro registrar_passageiro(void){
 }
 
 /*
-Chamada pelo comando FV,
+Chamada pelo comando FV e também quando o numero de passageiros cadastrado atinge o número de assentos disponíveis,
 essa funcao fecha o voo e encerra o programa, imprimindo informacoes como o numero de passageiros e o valor total das passagens 
 Entrada: fp - arquivo binário em questão
          informações_do_voo[4] - array com as informações básicas do voo registradas pelo comando AV
