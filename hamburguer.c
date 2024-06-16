@@ -28,9 +28,11 @@ typedef struct passageiro{
 } Passageiro;
 
 //Declaração das funções que serão usadas no código
+//Precisam ser modificadas
 int lerDadosSalvos(FILE *fp, float informacoes_do_voo[4], int *tamanho_lista_passageiros, Passageiro **lista_passageiros);
 void salvarDados(FILE *fp, int fechado, float informacoes_do_voo[4], int tamanho_lista_passageiros, Passageiro *lista_passageiros);
 
+//funções de suporte
 char *alocStr(int x);
 char *realocStr(char *a);
 Passageiro lerPassageiro();
@@ -38,6 +40,7 @@ Passageiro *realocPassageiros(Passageiro *p, int x);
 void imprimirPassageiro(Passageiro pessoa, char *modo);
 int acharCPF(char cpf[15], Passageiro *lista, int n);
 
+//funções primárias
 void abrirVoo(float infoVoo[4]);
 void registrarPassageiro(Passageiro **lista , int *n, float infoVoo[4]);
 void consultarReserva(Passageiro *lista, int n);
