@@ -39,6 +39,7 @@ Passageiro lerPassageiro();
 Passageiro *realocPassageiros(Passageiro *p, int x);
 void imprimirPassageiro(Passageiro pessoa, char *modo);
 int acharCPF(char cpf[15], Passageiro *lista, int n);
+void liberarMemoria(Passageiro *lista, int n)
 
 //funções primárias
 void abrirVoo(float infoVoo[4]);
