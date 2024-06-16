@@ -59,12 +59,31 @@ Entrada: *fp - arquivo binário
          tamanho_lista_passageiros - número de passageiros registrados para o voo
          *lista_passageiros - array contendo as structs de cada passageiro registrado
 */
-// void salvarDados(FILE *fp, int fechado, float informacoes_do_voo[4], int tamanho_lista_passageiros, Passageiro *lista_passageiros){
-//     fwrite(&fechado, sizeof(int), 1, fp);
-//     fwrite(informacoes_do_voo, sizeof(float), 4, fp);
-//     fwrite(&tamanho_lista_passageiros, sizeof(int), 1, fp);
-//     fwrite(lista_passageiros, sizeof(Passageiro), tamanho_lista_passageiros, fp);
-// }
+void salvarDados(FILE *fp, int fechado, float informacoes_do_voo[4], int tamanho_lista_passageiros, Passageiro *lista_passageiros){
+     fwrite(&fechado, sizeof(int), 1, fp);
+     fwrite(informacoes_do_voo, sizeof(float), 4, fp);
+     fwrite(&tamanho_lista_passageiros, sizeof(int), 1, fp);
+     fwrite(lista_passageiros, sizeof(Passageiro), tamanho_lista_passageiros, fp);
+
+     for (int i = 0; i < tamanho_lista_passageiros; i++){
+	     int tam_nome = strlen(lista_passageiros[i].nome);
+	     int tam_sobrenome = strlen(lista_passageiros[i].sobrenome);
+	     int tam_assento = strlen(lista_passageiros[i].assento);
+
+	     fwrite(&tam_nome, sizeof(int), 1, fp);
+	     fwrite(lista_passageiros[i].nome, 1, tam_nome, fp);
+
+	     fwrite(&tam_sobrenome, sizeof(int), 1, fp);
+	     fwrite(lista_passageiros[i].sobrenome, 1, tam_sobrenome, fp);
+
+	     fwrite(lista_passageiros[i].cpf, 1, 15, fp);
+
+	     fwrite(&tam_assento, sizeof(int), 1, fp);
+	     fwrite(lista_passageiros[i].assento, 1, tam_assento, fp);
+
+	     fwrite(&lista_passageiros[i].classe, sizeof(int), 1, fp);
+     }
+}
 
 /*
 Responsável por ler os dados salvos no arquivo binário,
@@ -75,15 +94,15 @@ Entrada: *fp - arquivo binário
          *lista_passageiros - array contendo as structs de cada passageiro registrado
 Saída: 
 */
-// int lerDadosSalvos(FILE *fp, float informacoes_do_voo[4], int *tamanho_lista_passageiros, Passageiro **lista_passageiros){
-//     int tmp;
-//     fread(&tmp, sizeof(int), 1, fp);
-//     fread(informacoes_do_voo, sizeof(float), 4, fp);
-//     fread(tamanho_lista_passageiros, sizeof(int), 1, fp);
-//     *lista_passageiros = realocPassageiros(*lista_passageiros, *tamanho_lista_passageiros);
-//     fread(*lista_passageiros, sizeof(Passageiro), *tamanho_lista_passageiros, fp);
-//     return tmp;
-// }
+int lerDadosSalvos(FILE *fp, float informacoes_do_voo[4], int *tamanho_lista_passageiros, Passageiro **lista_passageiros){
+     int tmp;
+     fread(&tmp, sizeof(int), 1, fp);
+     fread(informacoes_do_voo, sizeof(float), 4, fp);
+     fread(tamanho_lista_passageiros, sizeof(int), 1, fp);
+     *lista_passageiros = realocPassageiros(*lista_passageiros, *tamanho_lista_passageiros);
+     fread(*lista_passageiros, sizeof(Passageiro), *tamanho_lista_passageiros, fp);
+     return tmp;
+ }
 
 /*Função principal do programa*/
 int main (void){
@@ -95,13 +114,13 @@ int main (void){
 
     if (fp != NULL){ //Caso o arquivo já esteja escrito
         printf("arquivo encontrado!\n"); //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-        // if (lerDadosSalvos(fp, informacoes_do_voo, &tamanho_lista_passageiros, &lista_passageiros)){
-        //     fecharVoo(fp, informacoes_do_voo, tamanho_lista_passageiros, lista_passageiros);
-        //     rewind(fp);
-        //     fclose(fp);
-        //     free(lista_passageiros);
-        //     return 0;
-        // };
+         if (lerDadosSalvos(fp, informacoes_do_voo, &tamanho_lista_passageiros, &lista_passageiros)){
+             fecharVoo(lista_passageiros, tamanho_lista_passageiros, informacoes_do_voo);
+             rewind(fp);
+             fclose(fp);
+             free(lista_passageiros);
+             return 0;
+         };
         rewind(fp);
         fclose(fp);
     }
