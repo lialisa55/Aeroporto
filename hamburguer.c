@@ -70,19 +70,21 @@ void salvarDados(FILE *fp, int fechado, float informacoes_do_voo[4], int tamanho
         int tam_nome = (strlen(lista_passageiros[i].nome))+1;
         int tam_sobrenome = (strlen(lista_passageiros[i].sobrenome))+1;
         int tam_assento = (strlen(lista_passageiros[i].assento))+1;
+	int tam_classe = (strlen(lista_passageiros[i].classe))+1;
 
         fwrite(&tam_nome, sizeof(int), 1, fp);
-        fwrite(lista_passageiros[i].nome, 1, tam_nome, fp);
+        fwrite(lista_passageiros[i].nome, sizeof(char), tam_nome, fp);
 
         fwrite(&tam_sobrenome, sizeof(int), 1, fp);
-        fwrite(lista_passageiros[i].sobrenome, 1, tam_sobrenome, fp);
+        fwrite(lista_passageiros[i].sobrenome, sizeof(char), tam_sobrenome, fp);
 
         fwrite(lista_passageiros[i].cpf, sizeof(char), 15, fp);
 
         fwrite(&tam_assento, sizeof(int), 1, fp);
         fwrite(lista_passageiros[i].assento, sizeof(char), tam_assento, fp);
-
-        fwrite(&lista_passageiros[i].classe, sizeof(int), 1, fp);
+	
+	fwrite(&tam_classe, sizeof(int), 1, fp);
+        fwrite(lista_passageiros[i].classe, sizeof(char), tam_classe, fp);
     }
 }
 
@@ -121,13 +123,12 @@ int lerDadosSalvos(FILE *fp, float informacoes_do_voo[4], int *tamanho_lista_pas
     }
 
     for (int i = 0; i < *tamanho_lista_passageiros; i++) {
-        int tam_nome, tam_sobrenome, tam_assento;
+        int tam_nome, tam_sobrenome, tam_assento, tam_classe;
 
         if (fread(&tam_nome, sizeof(int), 1, fp) != 1) {
             perror("Erro ao ler 'tam_nome' do arquivo");
             return -1;
         }
-
         if (fread((*lista_passageiros)[i].nome, 1, tam_nome, fp) != tam_nome) {
             perror("Erro ao ler 'nome' do arquivo");
             return -1;
@@ -138,7 +139,6 @@ int lerDadosSalvos(FILE *fp, float informacoes_do_voo[4], int *tamanho_lista_pas
             perror("Erro ao ler 'tam_sobrenome' do arquivo");
             return -1;
         }
-
         if (fread((*lista_passageiros)[i].sobrenome, 1, tam_sobrenome, fp) != tam_sobrenome) {
             perror("Erro ao ler 'sobrenome' do arquivo");
             return -1;
@@ -154,17 +154,21 @@ int lerDadosSalvos(FILE *fp, float informacoes_do_voo[4], int *tamanho_lista_pas
             perror("Erro ao ler 'tam_assento' do arquivo");
             return -1;
         }
-
         if (fread((*lista_passageiros)[i].assento, 1, tam_assento, fp) != tam_assento) {
             perror("Erro ao ler 'assento' do arquivo");
             return -1;
         }
         (*lista_passageiros)[i].assento[tam_assento] = '\0';
 
-        if (fread(&(*lista_passageiros)[i].classe, sizeof(int), 1, fp) != 1) {
+	if (fread(&tam_classe, sizeof(int), 1, fp) != 1) {
+		perror("Erro ao ler 'tam_classe' do arquivo");
+		return -1;
+	}
+        if (fread((*lista_passageiros)[i].classe, sizeof(char), tam_classe, fp) != tam_classe) {
             perror("Erro ao ler 'classe' do arquivo");
             return -1;
         }
+	(*lista_passageiros)[i].classe[tam_classe] = '\0';
     }
     return tmp;
 }
