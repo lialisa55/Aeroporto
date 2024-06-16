@@ -290,7 +290,7 @@ void fecharDia(Passageiro *lista, int n, float infoVoo[4]) {
     printf("Posição: %.2f\n", infoVoo[3]);
     printf("--------------------------------------------------");
     printf("tamanho de lista: %d\n", sizeof(Passageiro) * n);
-    //salvarDados(fp, 0, infoVoo, n, lista);
+    salvarDados(fp, 0, infoVoo, n, lista);
     rewind(fp);
     fclose(fp);
     liberarMemoria(lista, n);
@@ -300,7 +300,7 @@ void fecharDia(Passageiro *lista, int n, float infoVoo[4]) {
 void fecharVoo(Passageiro *lista, int n, float infoVoo[4]) {
     FILE *fp = fopen("dados.bin", "wb");
     printf("Voo Fechado!\n\n");
-    //salvarDados(fp, 1, infoVoo, n, lista);
+    salvarDados(fp, 1, infoVoo, n, lista);
     
     for(int i = 0; i < n; i++) {
         imprimirPassageiro(lista[i], "curto");
