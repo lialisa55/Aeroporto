@@ -29,8 +29,8 @@ typedef struct passageiro{
 
 //Declaração das funções que serão usadas no código
 //Precisam ser modificadas
-int lerDadosSalvos(FILE *fp, float informacoes_do_voo[4], int *tamanho_lista_passageiros, Passageiro **lista_passageiros);
-void salvarDados(FILE *fp, int fechado, float informacoes_do_voo[4], int tamanho_lista_passageiros, Passageiro *lista_passageiros);
+//int lerDadosSalvos(FILE *fp, float informacoes_do_voo[4], int *tamanho_lista_passageiros, Passageiro **lista_passageiros);
+//void salvarDados(FILE *fp, int fechado, float informacoes_do_voo[4], int tamanho_lista_passageiros, Passageiro *lista_passageiros);
 
 //funções de suporte
 char *alocStr(int x);
@@ -39,7 +39,7 @@ Passageiro lerPassageiro();
 Passageiro *realocPassageiros(Passageiro *p, int x);
 void imprimirPassageiro(Passageiro pessoa, char *modo);
 int acharCPF(char cpf[15], Passageiro *lista, int n);
-void liberarMemoria(Passageiro *lista, int n)
+void liberarMemoria(Passageiro *lista, int n);
 
 //funções primárias
 void abrirVoo(float infoVoo[4]);
@@ -59,12 +59,12 @@ Entrada: *fp - arquivo binário
          tamanho_lista_passageiros - número de passageiros registrados para o voo
          *lista_passageiros - array contendo as structs de cada passageiro registrado
 */
-void salvarDados(FILE *fp, int fechado, float informacoes_do_voo[4], int tamanho_lista_passageiros, Passageiro *lista_passageiros){
-    fwrite(&fechado, sizeof(int), 1, fp);
-    fwrite(informacoes_do_voo, sizeof(float), 4, fp);
-    fwrite(&tamanho_lista_passageiros, sizeof(int), 1, fp);
-    fwrite(lista_passageiros, sizeof(Passageiro), tamanho_lista_passageiros, fp);
-}
+// void salvarDados(FILE *fp, int fechado, float informacoes_do_voo[4], int tamanho_lista_passageiros, Passageiro *lista_passageiros){
+//     fwrite(&fechado, sizeof(int), 1, fp);
+//     fwrite(informacoes_do_voo, sizeof(float), 4, fp);
+//     fwrite(&tamanho_lista_passageiros, sizeof(int), 1, fp);
+//     fwrite(lista_passageiros, sizeof(Passageiro), tamanho_lista_passageiros, fp);
+// }
 
 /*
 Responsável por ler os dados salvos no arquivo binário,
@@ -75,15 +75,15 @@ Entrada: *fp - arquivo binário
          *lista_passageiros - array contendo as structs de cada passageiro registrado
 Saída: 
 */
-int lerDadosSalvos(FILE *fp, float informacoes_do_voo[4], int *tamanho_lista_passageiros, Passageiro **lista_passageiros){
-    int tmp;
-    fread(&tmp, sizeof(int), 1, fp);
-    fread(informacoes_do_voo, sizeof(float), 4, fp);
-    fread(tamanho_lista_passageiros, sizeof(int), 1, fp);
-    *lista_passageiros = realocPassageiros(*lista_passageiros, *tamanho_lista_passageiros);
-    fread(*lista_passageiros, sizeof(Passageiro), *tamanho_lista_passageiros, fp);
-    return tmp;
-}
+// int lerDadosSalvos(FILE *fp, float informacoes_do_voo[4], int *tamanho_lista_passageiros, Passageiro **lista_passageiros){
+//     int tmp;
+//     fread(&tmp, sizeof(int), 1, fp);
+//     fread(informacoes_do_voo, sizeof(float), 4, fp);
+//     fread(tamanho_lista_passageiros, sizeof(int), 1, fp);
+//     *lista_passageiros = realocPassageiros(*lista_passageiros, *tamanho_lista_passageiros);
+//     fread(*lista_passageiros, sizeof(Passageiro), *tamanho_lista_passageiros, fp);
+//     return tmp;
+// }
 
 /*Função principal do programa*/
 int main (void){
@@ -113,27 +113,21 @@ int main (void){
         if (!strcmp(comando, "AV")){ 
             abrirVoo(informacoes_do_voo);
         } 
-
         if (!strcmp(comando, "RR")){ //adiciona um passageiro a lista_passageiros
            registrarPassageiro(&lista_passageiros, &tamanho_lista_passageiros, informacoes_do_voo);
         }
-
         if (!strcmp(comando, "MR")){ //Modificar Reserva
             modificarReserva(lista_passageiros, tamanho_lista_passageiros);
         }
-
         if (!strcmp(comando, "CR")){ //Consulta Reserva
             consultarReserva(lista_passageiros, tamanho_lista_passageiros);
         }
-
         if (!strcmp(comando, "CA")){ //Cancela Reserva
             cancelarReserva(&lista_passageiros, &tamanho_lista_passageiros, informacoes_do_voo);
         }
-
         if (!strcmp(comando, "FD")){ //Encerra o programa e salva as informacoes obtidas
             fecharDia(lista_passageiros, tamanho_lista_passageiros, informacoes_do_voo);
         }
-
         if (!strcmp(comando, "FV")){ //Encerra o programa e salva as informações obtidas
             fecharVoo(lista_passageiros, tamanho_lista_passageiros, informacoes_do_voo);
         }
@@ -277,7 +271,7 @@ void fecharDia(Passageiro *lista, int n, float infoVoo[4]) {
     printf("Posição: %.2f\n", infoVoo[3]);
     printf("--------------------------------------------------");
     printf("tamanho de lista: %d\n", sizeof(Passageiro) * n);
-    salvarDados(fp, 0, infoVoo, n, lista);
+    //salvarDados(fp, 0, infoVoo, n, lista);
     rewind(fp);
     fclose(fp);
     liberarMemoria(lista, n);
@@ -287,7 +281,7 @@ void fecharDia(Passageiro *lista, int n, float infoVoo[4]) {
 void fecharVoo(Passageiro *lista, int n, float infoVoo[4]) {
     FILE *fp = fopen("dados.bin", "wb");
     printf("Voo Fechado!\n\n");
-    salvarDados(fp, 1, infoVoo, n, lista);
+    //salvarDados(fp, 1, infoVoo, n, lista);
     
     for(int i = 0; i < n; i++) {
         imprimirPassageiro(lista[i], "curto");
