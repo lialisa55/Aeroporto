@@ -67,23 +67,20 @@ void salvarDados(FILE *fp, int fechado, float informacoes_do_voo[4], int tamanho
     fwrite(&tamanho_lista_passageiros, sizeof(int), 1, fp);
 
     for (int i = 0; i < tamanho_lista_passageiros; i++) {
-        int tam_nome = strlen(lista_passageiros[i].nome);
-        int tam_sobrenome = strlen(lista_passageiros[i].sobrenome);
-        int tam_assento = strlen(lista_passageiros[i].assento);
+        int tam_nome = (strlen(lista_passageiros[i].nome))+1;
+        int tam_sobrenome = (strlen(lista_passageiros[i].sobrenome))+1;
+        int tam_assento = (strlen(lista_passageiros[i].assento))+1;
 
         fwrite(&tam_nome, sizeof(int), 1, fp);
         fwrite(lista_passageiros[i].nome, 1, tam_nome, fp);
-        fwrite("\0", 1, 1, fp);
 
         fwrite(&tam_sobrenome, sizeof(int), 1, fp);
         fwrite(lista_passageiros[i].sobrenome, 1, tam_sobrenome, fp);
-        fwrite("\0", 1, 1, fp);
 
-        fwrite(lista_passageiros[i].cpf, 1, 15, fp);
+        fwrite(lista_passageiros[i].cpf, sizeof(char), 15, fp);
 
         fwrite(&tam_assento, sizeof(int), 1, fp);
-        fwrite(lista_passageiros[i].assento, 1, tam_assento, fp);
-        fwrite("\0", 1, 1, fp);
+        fwrite(lista_passageiros[i].assento, sizeof(char), tam_assento, fp);
 
         fwrite(&lista_passageiros[i].classe, sizeof(int), 1, fp);
     }
