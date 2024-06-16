@@ -59,31 +59,36 @@ Entrada: *fp - arquivo binário
          tamanho_lista_passageiros - número de passageiros registrados para o voo
          *lista_passageiros - array contendo as structs de cada passageiro registrado
 */
-void salvarDados(FILE *fp, int fechado, float informacoes_do_voo[4], int tamanho_lista_passageiros, Passageiro *lista_passageiros){
-     fwrite(&fechado, sizeof(int), 1, fp);
-     fwrite(informacoes_do_voo, sizeof(float), 4, fp);
-     fwrite(&tamanho_lista_passageiros, sizeof(int), 1, fp);
-     fwrite(lista_passageiros, sizeof(Passageiro), tamanho_lista_passageiros, fp);
+void salvarDados(FILE *fp, int fechado, float informacoes_do_voo[4], int tamanho_lista_passageiros, Passageiro *lista_passageiros) {
+    fwrite(&fechado, sizeof(int), 1, fp);
 
-     for (int i = 0; i < tamanho_lista_passageiros; i++){
-	     int tam_nome = strlen(lista_passageiros[i].nome);
-	     int tam_sobrenome = strlen(lista_passageiros[i].sobrenome);
-	     int tam_assento = strlen(lista_passageiros[i].assento);
+    fwrite(informacoes_do_voo, sizeof(float), 4, fp);
 
-	     fwrite(&tam_nome, sizeof(int), 1, fp);
-	     fwrite(lista_passageiros[i].nome, 1, tam_nome, fp);
+    fwrite(&tamanho_lista_passageiros, sizeof(int), 1, fp);
 
-	     fwrite(&tam_sobrenome, sizeof(int), 1, fp);
-	     fwrite(lista_passageiros[i].sobrenome, 1, tam_sobrenome, fp);
+    for (int i = 0; i < tamanho_lista_passageiros; i++) {
+        int tam_nome = strlen(lista_passageiros[i].nome);
+        int tam_sobrenome = strlen(lista_passageiros[i].sobrenome);
+        int tam_assento = strlen(lista_passageiros[i].assento);
 
-	     fwrite(lista_passageiros[i].cpf, 1, 15, fp);
+        fwrite(&tam_nome, sizeof(int), 1, fp);
+        fwrite(lista_passageiros[i].nome, 1, tam_nome, fp);
+        fwrite("\0", 1, 1, fp);
 
-	     fwrite(&tam_assento, sizeof(int), 1, fp);
-	     fwrite(lista_passageiros[i].assento, 1, tam_assento, fp);
+        fwrite(&tam_sobrenome, sizeof(int), 1, fp);
+        fwrite(lista_passageiros[i].sobrenome, 1, tam_sobrenome, fp);
+        fwrite("\0", 1, 1, fp);
 
-	     fwrite(&lista_passageiros[i].classe, sizeof(int), 1, fp);
-     }
+        fwrite(lista_passageiros[i].cpf, 1, 15, fp);
+
+        fwrite(&tam_assento, sizeof(int), 1, fp);
+        fwrite(lista_passageiros[i].assento, 1, tam_assento, fp);
+        fwrite("\0", 1, 1, fp);
+
+        fwrite(&lista_passageiros[i].classe, sizeof(int), 1, fp);
+    }
 }
+
 
 /*
 Responsável por ler os dados salvos no arquivo binário,
@@ -94,15 +99,78 @@ Entrada: *fp - arquivo binário
          *lista_passageiros - array contendo as structs de cada passageiro registrado
 Saída: 
 */
-int lerDadosSalvos(FILE *fp, float informacoes_do_voo[4], int *tamanho_lista_passageiros, Passageiro **lista_passageiros){
-     int tmp;
-     fread(&tmp, sizeof(int), 1, fp);
-     fread(informacoes_do_voo, sizeof(float), 4, fp);
-     fread(tamanho_lista_passageiros, sizeof(int), 1, fp);
-     *lista_passageiros = realocPassageiros(*lista_passageiros, *tamanho_lista_passageiros);
-     fread(*lista_passageiros, sizeof(Passageiro), *tamanho_lista_passageiros, fp);
-     return tmp;
- }
+int lerDadosSalvos(FILE *fp, float informacoes_do_voo[4], int *tamanho_lista_passageiros, Passageiro **lista_passageiros) {
+    int tmp;
+
+    if (fread(&tmp, sizeof(int), 1, fp) != 1) {
+        perror("Erro ao ler 'tmp' do arquivo");
+        return -1;
+    }
+
+    if (fread(informacoes_do_voo, sizeof(float), 4, fp) != 4) {
+        perror("Erro ao ler 'informacoes_do_voo' do arquivo");
+        return -1;
+    }
+
+    if (fread(tamanho_lista_passageiros, sizeof(int), 1, fp) != 1) {
+        perror("Erro ao ler 'tamanho_lista_passageiros' do arquivo");
+        return -1;
+    }
+
+    *lista_passageiros = realocPassageiros(*lista_passageiros, *tamanho_lista_passageiros);
+    if (*lista_passageiros == NULL) {
+        perror("Erro ao realocar memória para 'lista_passageiros'");
+        return -1;
+    }
+
+    for (int i = 0; i < *tamanho_lista_passageiros; i++) {
+        int tam_nome, tam_sobrenome, tam_assento;
+
+        if (fread(&tam_nome, sizeof(int), 1, fp) != 1) {
+            perror("Erro ao ler 'tam_nome' do arquivo");
+            return -1;
+        }
+
+        if (fread((*lista_passageiros)[i].nome, 1, tam_nome, fp) != tam_nome) {
+            perror("Erro ao ler 'nome' do arquivo");
+            return -1;
+        }
+        (*lista_passageiros)[i].nome[tam_nome] = '\0';
+
+        if (fread(&tam_sobrenome, sizeof(int), 1, fp) != 1) {
+            perror("Erro ao ler 'tam_sobrenome' do arquivo");
+            return -1;
+        }
+
+        if (fread((*lista_passageiros)[i].sobrenome, 1, tam_sobrenome, fp) != tam_sobrenome) {
+            perror("Erro ao ler 'sobrenome' do arquivo");
+            return -1;
+        }
+        (*lista_passageiros)[i].sobrenome[tam_sobrenome] = '\0';
+
+        if (fread((*lista_passageiros)[i].cpf, 1, 15, fp) != 15) {
+            perror("Erro ao ler 'cpf' do arquivo");
+            return -1;
+        }
+
+        if (fread(&tam_assento, sizeof(int), 1, fp) != 1) {
+            perror("Erro ao ler 'tam_assento' do arquivo");
+            return -1;
+        }
+
+        if (fread((*lista_passageiros)[i].assento, 1, tam_assento, fp) != tam_assento) {
+            perror("Erro ao ler 'assento' do arquivo");
+            return -1;
+        }
+        (*lista_passageiros)[i].assento[tam_assento] = '\0';
+
+        if (fread(&(*lista_passageiros)[i].classe, sizeof(int), 1, fp) != 1) {
+            perror("Erro ao ler 'classe' do arquivo");
+            return -1;
+        }
+    }
+    return tmp;
+}
 
 /*Função principal do programa*/
 int main (void){
