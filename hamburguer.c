@@ -174,48 +174,46 @@ int main (void){
     int tamanho_lista_passageiros = 0;
 
     FILE *fp = fopen("dados.bin", "rb");
-
+    int voo_fechado = 0;
+    int voo_encontrado = 0;
     if (fp != NULL){ //Caso o arquivo já esteja escrito
-        printf("arquivo encontrado!\n"); //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-         if (lerDadosSalvos(fp, informacoes_do_voo, &tamanho_lista_passageiros, &lista_passageiros)){
-             fecharVoo(lista_passageiros, tamanho_lista_passageiros, informacoes_do_voo);
-             rewind(fp);
-             fclose(fp);
-             free(lista_passageiros);
-             return 0;
-         };
+        voo_encontrado = 1;
+        if (lerDadosSalvos(fp, informacoes_do_voo, &tamanho_lista_passageiros, &lista_passageiros)){
+            fecharVoo(lista_passageiros, tamanho_lista_passageiros, informacoes_do_voo);
+            printf("\n");
+            voo_fechado = 1;
+        }
         rewind(fp);
         fclose(fp);
     }
-
     char comando[3] = "NA";
-    while (1){ 
+    while (strcmp(comando, "FV") != 0 && (strcmp(comando, "FD") != 0 || voo_fechado)){ 
         scanf("%s", comando); //Ler comando do usuário
              
-        if (!strcmp(comando, "AV")){ 
+        if (!strcmp(comando, "AV") && !voo_encontrado){ 
             abrirVoo(informacoes_do_voo);
         } 
-        if (!strcmp(comando, "RR")){ //adiciona um passageiro a lista_passageiros
+        else if (!strcmp(comando, "RR") && !voo_fechado){ //adiciona um passageiro a lista_passageiros
            registrarPassageiro(&lista_passageiros, &tamanho_lista_passageiros, informacoes_do_voo);
         }
-        if (!strcmp(comando, "MR")){ //Modificar Reserva
+        else if (!strcmp(comando, "MR") && !voo_fechado){ //Modificar Reserva
             modificarReserva(lista_passageiros, tamanho_lista_passageiros);
         }
-        if (!strcmp(comando, "CR")){ //Consulta Reserva
+        else if (!strcmp(comando, "CR")){ //Consulta Reserva
             consultarReserva(lista_passageiros, tamanho_lista_passageiros);
         }
-        if (!strcmp(comando, "CA")){ //Cancela Reserva
+        else if (!strcmp(comando, "CA") && !voo_fechado){ //Cancela Reserva
             cancelarReserva(&lista_passageiros, &tamanho_lista_passageiros, informacoes_do_voo);
         }
-        if (!strcmp(comando, "FD")){ //Encerra o programa e salva as informacoes obtidas
+        else if (!strcmp(comando, "FD") && !voo_fechado){ //Encerra o programa e salva as informacoes obtidas
             fecharDia(lista_passageiros, tamanho_lista_passageiros, informacoes_do_voo);
         }
-        if (!strcmp(comando, "FV")){ //Encerra o programa e salva as informações obtidas
+        else if (!strcmp(comando, "FV") ){ //Encerra o programa e salva as informações obtidas
             fecharVoo(lista_passageiros, tamanho_lista_passageiros, informacoes_do_voo);
         }
+        else printf("comando invalido\n");
     }
-    if (lista_passageiros != NULL) free(lista_passageiros);
-
+    if (lista_passageiros != NULL) liberarMemoria(lista_passageiros, tamanho_lista_passageiros);
     return 0;
 }
 
@@ -355,8 +353,6 @@ void fecharDia(Passageiro *lista, int n, float infoVoo[4]) {
     salvarDados(fp, 0, infoVoo, n, lista);
     rewind(fp);
     fclose(fp);
-    liberarMemoria(lista, n);
-    exit (0);
 }
 
 void fecharVoo(Passageiro *lista, int n, float infoVoo[4]) {
@@ -372,8 +368,6 @@ void fecharVoo(Passageiro *lista, int n, float infoVoo[4]) {
     printf("--------------------------------------------------");
     rewind(fp);
     fclose(fp);
-    liberarMemoria(lista, n);
-    exit (0);
 }
 
 /*
