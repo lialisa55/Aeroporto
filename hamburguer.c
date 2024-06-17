@@ -215,7 +215,7 @@ void fecharDia(Passageiro *lista, int n, float infoVoo[4]) {
     if (fp == NULL) printf("FP ta nulo!\n");
     printf("Fechamento do dia:\n");
     printf("Quantidade de reservas: %d\n", n);
-    printf("Posição: %.2f\n", infoVoo[3]);
+    printf("Posicao: %.2f\n", infoVoo[3]);
     printf("--------------------------------------------------");
     salvarDados(fp, 0, infoVoo, n, lista);
     rewind(fp);
