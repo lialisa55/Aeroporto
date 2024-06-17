@@ -1,8 +1,8 @@
 /*Banco de dados para Voos
 Projeto final do curso de Introdução à Ciência da Computação I, 2024.
-Autores: Joao Victor Alonso de Mello(turmaB), 
-         Nathalia Monalisa Coelho Mota(turmaA) e 
-         Renan Banci Catarin(turmaB).
+Autores: Joao Victor Alonso de Mello(turmaB) - 10951790;
+         Nathalia Monalisa Coelho Mota(turmaA) - 15522341e 
+         Renan Banci Catarin(turmaB) - 14658181.
 Professor: Rudinei Goularte.
 
 Objetivo: o código a seguir foi criado com o intuito de informatizar
