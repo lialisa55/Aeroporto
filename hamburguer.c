@@ -48,6 +48,7 @@ void imprimirPassageiro(Passageiro pessoa, char *modo);
 int acharCPF(char cpf[15], Passageiro *lista, int n);
 void liberarMemoria(Passageiro *lista, int n);
 void freadMelhorado(void *p, int tamanho, int repeticos, FILE *fp, char *nome);
+void limparLinhaStream(FILE *entrada);
 
 //funções primárias:
 void abrirVoo(float infoVoo[4]);
@@ -85,9 +86,15 @@ int main (void){
              
         if (!strcmp(comando, "AV") && !voo_encontrado){ 
             abrirVoo(informacoes_do_voo);
+            voo_encontrado = 1;
         } 
         else if (!strcmp(comando, "RR") && !voo_fechado){ //adiciona um passageiro a lista_passageiros.
            registrarPassageiro(&lista_passageiros, &tamanho_lista_passageiros, informacoes_do_voo);
+           if (tamanho_lista_passageiros == informacoes_do_voo[0]){
+               fecharVoo(lista_passageiros, tamanho_lista_passageiros, informacoes_do_voo);
+               printf("\n");
+               voo_fechado = 1;
+           }
         }
         else if (!strcmp(comando, "MR") && !voo_fechado){ //Modificar Reserva.
             modificarReserva(lista_passageiros, tamanho_lista_passageiros);
@@ -104,10 +111,26 @@ int main (void){
         else if (!strcmp(comando, "FV") ){ //Encerra o programa e salva as informações obtidas.
             fecharVoo(lista_passageiros, tamanho_lista_passageiros, informacoes_do_voo);
         }
-        else printf("comando invalido\n");
+        else {
+            printf("comando invalido\n");
+            limparLinhaStream(stdin);
+        }
     }
     if (lista_passageiros != NULL) liberarMemoria(lista_passageiros, tamanho_lista_passageiros);
     return 0;
+}
+
+/*
+comando limparLinhaStream:
+    remove o conteudo de uma linha da stream
+    é usado para limpar o lixo que pode sobrar de um comando inválido
+    supomos que nao havera mais de um comando em uma linha e que o lixo ocupará menos de 500 caracteres
+    pois não seriam comandos corretos e ,como foi dito no pdf, este tipo de erro nao precisa ser tratado
+*/
+
+void limparLinhaStream(FILE *entrada){
+    char tmp[500];
+    fgets(tmp, 500, entrada);
 }
 
 /*
@@ -130,9 +153,6 @@ void registrarPassageiro(Passageiro **lista , int *n, float infoVoo[4]) {
     *lista = realocPassageiros(*lista, *n);
     (*lista)[*n - 1] = lerPassageiro();
     infoVoo[3] += (*lista)[*n - 1].valor;
-    if (*n == infoVoo[0]){
-        fecharVoo(*lista, *n, infoVoo);  
-    }
 }
 
 /*
