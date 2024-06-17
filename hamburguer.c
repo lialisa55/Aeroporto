@@ -111,88 +111,6 @@ int main (void){
 }
 
 /*
-Aloca strings, como por exemplo o nome do passageiro.
-Entrada: x - Valor que representas quantos caracteres serão alocados.
-Saída: b - Espaço alocado que será atibuido a string em questão.
-*/
-char *alocStr(int x){
-    char *b = malloc(x * sizeof(char));
-    if (b == NULL){
-        printf("Erro: Falha na alocacao de memoria");
-        exit(1);
-    }
-    return b;
-}
-
-/*
-Realoca strings, por exemplo o nome do passageiro, para não ocupar mais memória que o necessário.
-Entrada: a - String a ser realocada.
-Saída: b - Espaço realocado que será atibuido a string em questão.
-*/
-char *otimizarEspacoStr(char *a){
-    char *b = realloc(a, (strlen(a) + 1) * sizeof(char));
-    if (b == NULL){
-        printf("OWO sumimasen senpai-san! nao tenho memoria o suficiente UWU");
-        exit(1);
-    }
-    return b;
-}
-
-/*
-Realoca o vetor de structs passageiro,
-Quando o comando RR é chamado antes de executar a função de registrar
-um passageiro o vetor é realocado para que possa ser liberado espaço na memória 
-Também é chamada para encurtar a lista no caso de CA ser chamado.
-Entradas: *p - Representa a lista de passageiros.
-           x - tamanho a ser realocado.
-Saída: b - Espaço realocado que será atibuido ao vetor em questão.
-*/
-Passageiro *realocPassageiros(Passageiro *p, int x){
-    if (x == 0){
-        free(p);
-        return NULL;
-    }
-    Passageiro *b = realloc(p, x * sizeof(Passageiro));
-    if (b == NULL){
-        printf("Erro: Falha na alocacao de memoria");
-        exit(1);
-    }
-    return b;
-}
-
-/*
-Previne o vazamento da memória alocada, 
- uma boa pratica adotada para esse código.
-*/
-void liberarMemoria(Passageiro *lista, int n) {
-    for(int i = 0; i < n; i++) {
-        free(lista[i].nome);
-        free(lista[i].sobrenome);
-        free(lista[i].assento);
-        free(lista[i].classe);
-        free(lista[i].origem);
-        free(lista[i].destino);
-        free(lista[i].numero_voo);
-    }
-    free(lista);
-}
-
-/* Lê uma informação do arquivo e imprime caso dê algum erro
-Entrada: *p - ponteiro sem tipo que aponta para o lugar atual dentro do arquivo
-	 tamanho - inteiro que indica o tamanho da informação
-	 repeticos - inteiro que indica quantas vezes a informação deve ser lida
-	 *fp - arquivo binário
-	 *nome - nome da informação sendo lida
-*/
-void freadMelhorado(void *p, int tamanho, int repeticos, FILE *fp, char *nome){
-    if (fread(p, tamanho, repeticos, fp) != repeticos) {
-        char c[100] = "Erro ao ler ";
-        strcat(c, nome);
-        perror(c);
-    }
-}
-
-/*
 Comando AV:
  possibilita o usuário informar os dados básicos do voo, sao armazenados em infoVoo.
 */
@@ -327,6 +245,195 @@ void fecharVoo(Passageiro *lista, int n, float infoVoo[4]) {
 }
 
 /*
+Como o próprio nome da função diz ela salva os dados já registrados,
+esse processo é feito em um arquivo binário passado como parametro da função
+Entrada: *fp - arquivo binário
+         fechado - inteiro usado como booleano para se o voo esta fechado ou não 
+         informações_do_voo[4] - array com as informações básicas do voo registradas pelo comando AV
+         tamanho_lista_passageiros - número de passageiros registrados para o voo
+         *lista_passageiros - array contendo as structs de cada passageiro registrado
+*/
+void salvarDados(FILE *fp, int fechado, float informacoes_do_voo[4], int tamanho_lista_passageiros, Passageiro *lista_passageiros) {
+    fwrite(&fechado, sizeof(int), 1, fp);
+
+    fwrite(informacoes_do_voo, sizeof(float), 4, fp);
+
+    fwrite(&tamanho_lista_passageiros, sizeof(int), 1, fp);
+
+    for (int i = 0; i < tamanho_lista_passageiros; i++) {
+        int tam_nome = strlen(lista_passageiros[i].nome)+1;
+        int tam_sobrenome = strlen(lista_passageiros[i].sobrenome)+1;
+        int tam_assento = strlen(lista_passageiros[i].assento)+1;
+    	int tam_classe = strlen(lista_passageiros[i].classe)+1;
+    	int tam_origem = strlen(lista_passageiros[i].origem) + 1;
+    	int tam_destino = strlen(lista_passageiros[i].destino) + 1;
+    	int tam_numero_voo = strlen(lista_passageiros[i].numero_voo) + 1;
+
+        fwrite(&tam_nome, sizeof(int), 1, fp);
+        fwrite(lista_passageiros[i].nome, sizeof(char), tam_nome, fp);
+
+        fwrite(&tam_sobrenome, sizeof(int), 1, fp);
+        fwrite(lista_passageiros[i].sobrenome, sizeof(char), tam_sobrenome, fp);
+
+        fwrite(lista_passageiros[i].cpf, sizeof(char), 15, fp);
+
+        fwrite(&tam_assento, sizeof(int), 1, fp);
+        fwrite(lista_passageiros[i].assento, sizeof(char), tam_assento, fp);
+	
+	    fwrite(&tam_classe, sizeof(int), 1, fp);
+        fwrite(lista_passageiros[i].classe, sizeof(char), tam_classe, fp);  //*origem, *destino, *numero_voo, int valor, data[3]
+        
+        fwrite(&tam_origem, sizeof(int), 1, fp);
+        fwrite(lista_passageiros[i].origem, sizeof(char), tam_origem, fp);
+        
+        fwrite(&tam_destino, sizeof(int), 1, fp);
+        fwrite(lista_passageiros[i].destino, sizeof(char), tam_destino, fp);
+        
+        fwrite(&tam_numero_voo, sizeof(int), 1, fp);
+        fwrite(lista_passageiros[i].numero_voo, sizeof(char), tam_numero_voo, fp);
+        
+        fwrite(&lista_passageiros[i].valor, sizeof(int), 1, fp);
+        fwrite(lista_passageiros[i].data, sizeof(int), 3, fp);
+    }
+}
+
+/*
+Responsável por ler os dados salvos no arquivo binário,
+Ela serve para continuar o preenchimento dos dados de nvoos passageiros após um dia ter sido fechado
+Entrada: *fp - arquivo binário
+	informações do voo[4] - array com as informações básicas do voo registrado
+        tamanho_lista_passageiros - número de passageiros registrados para o voo
+        *lista_passageiros - array contendo as structs de cada passageiro registrado
+Saída: tmp - inteiro que retorna se o voo esta fechado ou não 
+*/
+int lerDadosSalvos(FILE *fp, float informacoes_do_voo[4], int *tamanho_lista_passageiros, Passageiro **lista_passageiros) {
+    int tmp;
+    freadMelhorado(&tmp, sizeof(int), 1, fp, "fechado");
+    freadMelhorado(informacoes_do_voo, sizeof(float), 4, fp, "informacoes_do_voo");
+    freadMelhorado(tamanho_lista_passageiros, sizeof(int), 1, fp, "tamanho_lista_passageiros");
+    *lista_passageiros = realocPassageiros(*lista_passageiros, *tamanho_lista_passageiros);
+    for (int i = 0; i < *tamanho_lista_passageiros; i++) {
+        int tam_nome, tam_sobrenome, tam_assento, tam_classe, tam_origem, tam_destino, tam_numero_voo;
+        freadMelhorado(&tam_nome, sizeof(int), 1, fp, "tam_nome");
+        lista_passageiros[0][i].nome = alocStr(tam_nome);
+        freadMelhorado(lista_passageiros[0][i].nome, sizeof(char), tam_nome, fp, "nome");
+        
+        freadMelhorado(&tam_sobrenome, sizeof(int), 1, fp, "tam_sobrenome");
+        lista_passageiros[0][i].sobrenome = alocStr(tam_sobrenome);
+        freadMelhorado(lista_passageiros[0][i].sobrenome, sizeof(char), tam_sobrenome, fp, "sobrenome");
+        
+        freadMelhorado(lista_passageiros[0][i].cpf, sizeof(char), 15, fp, "cpf");
+        
+        freadMelhorado(&tam_assento, sizeof(int), 1, fp, "tam_assento");
+        lista_passageiros[0][i].assento = alocStr(tam_assento);
+        freadMelhorado(lista_passageiros[0][i].assento, sizeof(char), tam_assento, fp, "assento");
+        
+        freadMelhorado(&tam_classe, sizeof(int), 1, fp, "tam_classe");
+        lista_passageiros[0][i].classe = alocStr(tam_classe);
+        freadMelhorado(lista_passageiros[0][i].classe, sizeof(char), tam_classe, fp, "classe");
+        
+        freadMelhorado(&tam_origem, sizeof(int), 1, fp, "tam_origem");
+        lista_passageiros[0][i].origem = alocStr(tam_origem);
+        freadMelhorado(lista_passageiros[0][i].origem, sizeof(char), tam_origem, fp, "origem");
+        
+        freadMelhorado(&tam_destino, sizeof(int), 1, fp, "tam_destino");
+        lista_passageiros[0][i].destino = alocStr(tam_destino);
+        freadMelhorado(lista_passageiros[0][i].destino, sizeof(char), tam_destino, fp, "destino");
+        
+        freadMelhorado(&tam_numero_voo, sizeof(int), 1, fp, "tam_numero_voo");
+        lista_passageiros[0][i].numero_voo = alocStr(tam_numero_voo);
+        freadMelhorado(lista_passageiros[0][i].numero_voo, sizeof(char), tam_numero_voo, fp, "numero_voo");
+        
+        freadMelhorado(&lista_passageiros[0][i].valor, sizeof(int), 1, fp, "valor do voo");
+        
+        freadMelhorado(lista_passageiros[0][i].data, sizeof(int), 3, fp, "data do voo");
+    }
+    return tmp;
+}
+
+/*
+Aloca strings, como por exemplo o nome do passageiro.
+Entrada: x - Valor que representas quantos caracteres serão alocados.
+Saída: b - Espaço alocado que será atibuido a string em questão.
+*/
+char *alocStr(int x){
+    char *b = malloc(x * sizeof(char));
+    if (b == NULL){
+        printf("Erro: Falha na alocacao de memoria");
+        exit(1);
+    }
+    return b;
+}
+
+/*
+Realoca strings, por exemplo o nome do passageiro, para não ocupar mais memória que o necessário.
+Entrada: a - String a ser realocada.
+Saída: b - Espaço realocado que será atibuido a string em questão.
+*/
+char *otimizarEspacoStr(char *a){
+    char *b = realloc(a, (strlen(a) + 1) * sizeof(char));
+    if (b == NULL){
+        printf("OWO sumimasen senpai-san! nao tenho memoria o suficiente UWU");
+        exit(1);
+    }
+    return b;
+}
+
+/*
+Realoca o vetor de structs passageiro,
+Quando o comando RR é chamado antes de executar a função de registrar
+um passageiro o vetor é realocado para que possa ser liberado espaço na memória 
+Também é chamada para encurtar a lista no caso de CA ser chamado.
+Entradas: *p - Representa a lista de passageiros.
+           x - tamanho a ser realocado.
+Saída: b - Espaço realocado que será atibuido ao vetor em questão.
+*/
+Passageiro *realocPassageiros(Passageiro *p, int x){
+    if (x == 0){
+        free(p);
+        return NULL;
+    }
+    Passageiro *b = realloc(p, x * sizeof(Passageiro));
+    if (b == NULL){
+        printf("Erro: Falha na alocacao de memoria");
+        exit(1);
+    }
+    return b;
+}
+
+/*
+Previne o vazamento da memória alocada, 
+ uma boa pratica adotada para esse código.
+*/
+void liberarMemoria(Passageiro *lista, int n) {
+    for(int i = 0; i < n; i++) {
+        free(lista[i].nome);
+        free(lista[i].sobrenome);
+        free(lista[i].assento);
+        free(lista[i].classe);
+        free(lista[i].origem);
+        free(lista[i].destino);
+        free(lista[i].numero_voo);
+    }
+    free(lista);
+}
+
+/* Lê uma informação do arquivo e imprime caso dê algum erro
+Entrada: *p - ponteiro sem tipo que aponta para o lugar atual dentro do arquivo
+	 tamanho - inteiro que indica o tamanho da informação
+	 repeticos - inteiro que indica quantas vezes a informação deve ser lida
+	 *fp - arquivo binário
+	 *nome - nome da informação sendo lida
+*/
+void freadMelhorado(void *p, int tamanho, int repeticos, FILE *fp, char *nome){
+    if (fread(p, tamanho, repeticos, fp) != repeticos) {
+        char c[100] = "Erro ao ler ";
+        strcat(c, nome);
+        perror(c);
+    }
+}
+
+/*
 Funcao que retorna o indexamento de um cpf específico,
 ela é útil para modificar ou deletar a reserva de um passageiro
 Entrada: *cpf - o CPF que está sendo procurado
@@ -404,112 +511,4 @@ void imprimirPassageiro(Passageiro p, char *modo){
         printf("Trecho: %s %s\n", p.origem, p.destino);
         printf("Valor: %.02f\n", p.valor);
     }
-}
-
-
-/*
-Como o próprio nome da função diz ela salva os dados já registrados,
-esse processo é feito em um arquivo binário passado como parametro da função
-Entrada: *fp - arquivo binário
-         fechado - inteiro usado como booleano para se o voo esta fechado ou não 
-         informações_do_voo[4] - array com as informações básicas do voo registradas pelo comando AV
-         tamanho_lista_passageiros - número de passageiros registrados para o voo
-         *lista_passageiros - array contendo as structs de cada passageiro registrado
-*/
-void salvarDados(FILE *fp, int fechado, float informacoes_do_voo[4], int tamanho_lista_passageiros, Passageiro *lista_passageiros) {
-    fwrite(&fechado, sizeof(int), 1, fp);
-
-    fwrite(informacoes_do_voo, sizeof(float), 4, fp);
-
-    fwrite(&tamanho_lista_passageiros, sizeof(int), 1, fp);
-
-    for (int i = 0; i < tamanho_lista_passageiros; i++) {
-        int tam_nome = strlen(lista_passageiros[i].nome)+1;
-        int tam_sobrenome = strlen(lista_passageiros[i].sobrenome)+1;
-        int tam_assento = strlen(lista_passageiros[i].assento)+1;
-    	int tam_classe = strlen(lista_passageiros[i].classe)+1;
-    	int tam_origem = strlen(lista_passageiros[i].origem) + 1;
-    	int tam_destino = strlen(lista_passageiros[i].destino) + 1;
-    	int tam_numero_voo = strlen(lista_passageiros[i].numero_voo) + 1;
-
-        fwrite(&tam_nome, sizeof(int), 1, fp);
-        fwrite(lista_passageiros[i].nome, sizeof(char), tam_nome, fp);
-
-        fwrite(&tam_sobrenome, sizeof(int), 1, fp);
-        fwrite(lista_passageiros[i].sobrenome, sizeof(char), tam_sobrenome, fp);
-
-        fwrite(lista_passageiros[i].cpf, sizeof(char), 15, fp);
-
-        fwrite(&tam_assento, sizeof(int), 1, fp);
-        fwrite(lista_passageiros[i].assento, sizeof(char), tam_assento, fp);
-	
-	    fwrite(&tam_classe, sizeof(int), 1, fp);
-        fwrite(lista_passageiros[i].classe, sizeof(char), tam_classe, fp);  //*origem, *destino, *numero_voo, int valor, data[3]
-        
-        fwrite(&tam_origem, sizeof(int), 1, fp);
-        fwrite(lista_passageiros[i].origem, sizeof(char), tam_origem, fp);
-        
-        fwrite(&tam_destino, sizeof(int), 1, fp);
-        fwrite(lista_passageiros[i].destino, sizeof(char), tam_destino, fp);
-        
-        fwrite(&tam_numero_voo, sizeof(int), 1, fp);
-        fwrite(lista_passageiros[i].numero_voo, sizeof(char), tam_numero_voo, fp);
-        
-        fwrite(&lista_passageiros[i].valor, sizeof(int), 1, fp);
-        fwrite(lista_passageiros[i].data, sizeof(int), 3, fp);
-    }
-}
-
-/*
-Responsável por ler os dados salvos no arquivo binário,
-Ela serve para continuar o preenchimento dos dados de nvoos passageiros após um dia ter sido fechado
-Entrada: *fp - arquivo binário
-	informações do voo[4] - array com as informações básicas do voo registrado
-        tamanho_lista_passageiros - número de passageiros registrados para o voo
-        *lista_passageiros - array contendo as structs de cada passageiro registrado
-Saída: tmp - inteiro que retorna se o voo esta fechado ou não 
-*/
-int lerDadosSalvos(FILE *fp, float informacoes_do_voo[4], int *tamanho_lista_passageiros, Passageiro **lista_passageiros) {
-    int tmp;
-    freadMelhorado(*tmp, sizeof(int), 1, fp, "fechado");
-    freadMelhorado(informacoes_do_voo, sizeof(float), 4, fp, "informacoes_do_voo");
-    freadMelhorado(tamanho_lista_passageiros, sizeof(int), 1, fp, "tamanho_lista_passageiros");
-    *lista_passageiros = realocPassageiros(*lista_passageiros, *tamanho_lista_passageiros);
-    for (int i = 0; i < *tamanho_lista_passageiros; i++) {
-        int tam_nome, tam_sobrenome, tam_assento, tam_classe, tam_origem, tam_destino, tam_numero_voo;
-        freadMelhorado(&tam_nome, sizeof(int), 1, fp, "tam_nome");
-        lista_passageiros[0][i].nome = alocStr(tam_nome);
-        freadMelhorado(lista_passageiros[0][i].nome, sizeof(char), tam_nome, fp, "nome");
-        
-        freadMelhorado(&tam_sobrenome, sizeof(int), 1, fp, "tam_sobrenome");
-        lista_passageiros[0][i].sobrenome = alocStr(tam_sobrenome);
-        freadMelhorado(lista_passageiros[0][i].sobrenome, sizeof(char), tam_sobrenome, fp, "sobrenome");
-        
-        freadMelhorado(lista_passageiros[0][i].cpf, sizeof(char), 15, fp, "cpf");
-        
-        freadMelhorado(&tam_assento, sizeof(int), 1, fp, "tam_assento");
-        lista_passageiros[0][i].assento = alocStr(tam_assento);
-        freadMelhorado(lista_passageiros[0][i].assento, sizeof(char), tam_assento, fp, "assento");
-        
-        freadMelhorado(&tam_classe, sizeof(int), 1, fp, "tam_classe");
-        lista_passageiros[0][i].classe = alocStr(tam_classe);
-        freadMelhorado(lista_passageiros[0][i].classe, sizeof(char), tam_classe, fp, "classe");
-        
-        freadMelhorado(&tam_origem, sizeof(int), 1, fp, "tam_origem");
-        lista_passageiros[0][i].origem = alocStr(tam_origem);
-        freadMelhorado(lista_passageiros[0][i].origem, sizeof(char), tam_origem, fp, "origem");
-        
-        freadMelhorado(&tam_destino, sizeof(int), 1, fp, "tam_destino");
-        lista_passageiros[0][i].destino = alocStr(tam_destino);
-        freadMelhorado(lista_passageiros[0][i].destino, sizeof(char), tam_destino, fp, "destino");
-        
-        freadMelhorado(&tam_numero_voo, sizeof(int), 1, fp, "tam_numero_voo");
-        lista_passageiros[0][i].numero_voo = alocStr(tam_numero_voo);
-        freadMelhorado(lista_passageiros[0][i].numero_voo, sizeof(char), tam_numero_voo, fp, "numero_voo");
-        
-        freadMelhorado(&lista_passageiros[0][i].valor, sizeof(int), 1, fp, "valor do voo");
-        
-        freadMelhorado(lista_passageiros[0][i].data, sizeof(int), 3, fp, "data do voo");
-    }
-    return tmp;
 }
