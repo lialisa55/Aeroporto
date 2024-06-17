@@ -188,6 +188,7 @@ Saída: tmp -
 */
 int lerDadosSalvos(FILE *fp, float informacoes_do_voo[4], int *tamanho_lista_passageiros, Passageiro **lista_passageiros) {
     int tmp;
+    freadMelhorado(*tmp, sizeof(int), 1, fp, "fechado");
     freadMelhorado(informacoes_do_voo, sizeof(float), 4, fp, "informacoes_do_voo");
     freadMelhorado(tamanho_lista_passageiros, sizeof(int), 1, fp, "tamanho_lista_passageiros");
     *lista_passageiros = realocPassageiros(*lista_passageiros, *tamanho_lista_passageiros);
