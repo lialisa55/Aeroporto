@@ -184,7 +184,7 @@ Entrada: *fp - arquivo binário
 	informações do voo[4] - array com as informações básicas do voo registrado
         tamanho_lista_passageiros - número de passageiros registrados para o voo
         *lista_passageiros - array contendo as structs de cada passageiro registrado
-Saída: tmp - 
+Saída: tmp - inteiro que retorna se o voo esta fechado ou não 
 */
 int lerDadosSalvos(FILE *fp, float informacoes_do_voo[4], int *tamanho_lista_passageiros, Passageiro **lista_passageiros) {
     int tmp;
