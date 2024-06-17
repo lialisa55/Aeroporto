@@ -124,8 +124,7 @@ int main (void){
 comando limparLinhaStream:
     remove o conteudo de uma linha da stream
     é usado para limpar o lixo que pode sobrar de um comando inválido
-    supomos que nao havera mais de um comando em uma linha e que o lixo ocupará menos de 500 caracteres
-    pois não seriam comandos corretos e ,como foi dito no pdf, este tipo de erro nao precisa ser tratado
+    supomos que nao havera mais de um comando em uma linha
 */
 
 void limparLinhaStream(FILE *entrada){
