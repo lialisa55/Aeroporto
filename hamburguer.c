@@ -1,19 +1,21 @@
-/*Banco de dados para Voosfiz 
+/*Banco de dados para Voos
 Projeto final do curso de Introdução à Ciência da Computação I, 2024.
-Autores: Joao Victor Alonso de Mello(turmaB), 
-         Natália Monalisa Coelho Mota(turmaA),
-         Renan Banci Catarin(turmaB)
-Professor: Rudinei Goularte
+Autores: Joao Victor Alonso de Mello(turmaB); 
+         Natália Monalisa Coelho Mota(turmaA) e 
+         Renan Banci Catarin(turmaB).
+Professor: Rudinei Goularte.
 
 Objetivo: o código a seguir foi criado com o intuito de informatizar
 um sistema de cadastro de passageiros para uma companhia aérea.
 Como as especificações do projeto ordenam, o sistema não é complexo,
 funcionando apenas para um único voo de trecho simples,
 além de a reserva de passageiros ser feita individualmente.
-Também é possível Consultar, Modificar e Cancelar uma reserva
+Também é possível Consultar, Modificar e Cancelar uma reserva.
 
-Sobre os voos, quando um dia é fechado os dados salvos podem ser reabertos em um outro dia para receberem modificações.
-Porém, quando o voo é fechado os dados são salvos e nao pode ser mais modificado.
+Sobre os voos, quando um dia é fechado os dados salvos podem ser reabertos
+ em um outro dia para receberem modificações.
+Porém, quando o voo é fechado os dados são salvos e nao pode ser mais modificado,
+ sendo o unico comando válido o de consultar reserva.
 */
 #include <stdio.h>
 #include <stdlib.h>
@@ -27,12 +29,17 @@ typedef struct passageiro{
     int data[3];
 } Passageiro;
 
-//Declaração das funções que serão usadas no código
-//Precisam ser modificadas
-//int lerDadosSalvos(FILE *fp, float informacoes_do_voo[4], int *tamanho_lista_passageiros, Passageiro **lista_passageiros);
-//void salvarDados(FILE *fp, int fechado, float informacoes_do_voo[4], int tamanho_lista_passageiros, Passageiro *lista_passageiros);
+//Declaração das funções que serão usadas no código:
 
-//funções de suporte
+/*
+Entradas Recorrentes:
+*lista - representa a lista das estruturas dos passageiros.
+n - o tamanho da estrutura da lista de passageiros.
+infoVoo[4] - um array de floats com as informacoes de voo inseridas pelo comena do AV
+ como o numero de assentos, preço da econômica e executiva além do valor total do voo.
+*/
+
+//funções de suporte:
 char *alocStr(int x);
 char *otimizarEspacoStr(char *a);
 Passageiro lerPassageiro();
@@ -41,7 +48,7 @@ void imprimirPassageiro(Passageiro pessoa, char *modo);
 int acharCPF(char cpf[15], Passageiro *lista, int n);
 void liberarMemoria(Passageiro *lista, int n);
 
-//funções primárias
+//funções primárias:
 void abrirVoo(float infoVoo[4]);
 void registrarPassageiro(Passageiro **lista , int *n, float infoVoo[4]);
 void consultarReserva(Passageiro *lista, int n);
@@ -107,7 +114,7 @@ void salvarDados(FILE *fp, int fechado, float informacoes_do_voo[4], int tamanho
 /*
 Responsável por ler os dados salvos no arquivo binário,
 ela serve para continuar o preenchimento dos dados de nvoos passageiros após um dia ter sido fechado
-Entrada: *fp - arquivo binário 
+Entrada: *fp - arquivo binário.
          informações_do_voo[4] - array com as informações básicas do voo registradas pelo comando AV
          tamanho_lista_passageiros - número de passageiros registrados para o voo
          *lista_passageiros - array contendo as structs de cada passageiro registrado
@@ -176,7 +183,7 @@ int main (void){
     FILE *fp = fopen("dados.bin", "rb");
     int voo_fechado = 0;
     int voo_encontrado = 0;
-    if (fp != NULL){ //Caso o arquivo já esteja escrito
+    if (fp != NULL){ //Caso o arquivo já esteja escrito.
         voo_encontrado = 1;
         if (lerDadosSalvos(fp, informacoes_do_voo, &tamanho_lista_passageiros, &lista_passageiros)){
             fecharVoo(lista_passageiros, tamanho_lista_passageiros, informacoes_do_voo);
@@ -188,27 +195,27 @@ int main (void){
     }
     char comando[3] = "NA";
     while (strcmp(comando, "FV") != 0 && (strcmp(comando, "FD") != 0 || voo_fechado)){ 
-        scanf("%s", comando); //Ler comando do usuário
+        scanf("%s", comando); //Ler comando do usuário.
              
         if (!strcmp(comando, "AV") && !voo_encontrado){ 
             abrirVoo(informacoes_do_voo);
         } 
-        else if (!strcmp(comando, "RR") && !voo_fechado){ //adiciona um passageiro a lista_passageiros
+        else if (!strcmp(comando, "RR") && !voo_fechado){ //adiciona um passageiro a lista_passageiros.
            registrarPassageiro(&lista_passageiros, &tamanho_lista_passageiros, informacoes_do_voo);
         }
-        else if (!strcmp(comando, "MR") && !voo_fechado){ //Modificar Reserva
+        else if (!strcmp(comando, "MR") && !voo_fechado){ //Modificar Reserva.
             modificarReserva(lista_passageiros, tamanho_lista_passageiros);
         }
-        else if (!strcmp(comando, "CR")){ //Consulta Reserva
+        else if (!strcmp(comando, "CR")){ //Consulta Reserva.
             consultarReserva(lista_passageiros, tamanho_lista_passageiros);
         }
-        else if (!strcmp(comando, "CA") && !voo_fechado){ //Cancela Reserva
+        else if (!strcmp(comando, "CA") && !voo_fechado){ //Cancela Reserva.
             cancelarReserva(&lista_passageiros, &tamanho_lista_passageiros, informacoes_do_voo);
         }
-        else if (!strcmp(comando, "FD") && !voo_fechado){ //Encerra o programa e salva as informacoes obtidas
+        else if (!strcmp(comando, "FD") && !voo_fechado){ //Encerra o programa e salva as informacoes obtidas.
             fecharDia(lista_passageiros, tamanho_lista_passageiros, informacoes_do_voo);
         }
-        else if (!strcmp(comando, "FV") ){ //Encerra o programa e salva as informações obtidas
+        else if (!strcmp(comando, "FV") ){ //Encerra o programa e salva as informações obtidas.
             fecharVoo(lista_passageiros, tamanho_lista_passageiros, informacoes_do_voo);
         }
         else printf("comando invalido\n");
@@ -218,9 +225,9 @@ int main (void){
 }
 
 /*
-Essa função aloca strings, como por exemplo o nome do passageiro
-Entrada: x - Valor que representas quantos caracteres serão alocados
-Saída: b - Espaço alocado que será atibuido a string em questão
+Aloca strings, como por exemplo o nome do passageiro.
+Entrada: x - Valor que representas quantos caracteres serão alocados.
+Saída: b - Espaço alocado que será atibuido a string em questão.
 */
 char *alocStr(int x){
     char *b = malloc(x * sizeof(char));
@@ -232,9 +239,9 @@ char *alocStr(int x){
 }
 
 /*
-Essa função realoca strings, por exemplo o nome do passageiro, para não ocupar mais memória que o necessário
-Entrada: a - String a ser realocada
-Saída: b - Espaço realocado que será atibuido a string em questão
+Realoca strings, por exemplo o nome do passageiro, para não ocupar mais memória que o necessário.
+Entrada: a - String a ser realocada.
+Saída: b - Espaço realocado que será atibuido a string em questão.
 */
 char *otimizarEspacoStr(char *a){
     char *b = realloc(a, (strlen(a) + 1) * sizeof(char));
@@ -246,12 +253,13 @@ char *otimizarEspacoStr(char *a){
 }
 
 /*
-Essa função realoca o vetor de structs passageiro,
+Realoca o vetor de structs passageiro,
 Quando o comando RR é chamado antes de executar a função de registrar
 um passageiro o vetor é realocado para que possa ser liberado espaço na memória 
-Entradas: *p - Representa a lista de passageiros
-           x - tamanho a ser realocado
-Saída: b - Espaço realocado que será atibuido ao vetor em questão
+Também é chamada para encurtar a lista no caso de CA ser chamado.
+Entradas: *p - Representa a lista de passageiros.
+           x - tamanho a ser realocado.
+Saída: b - Espaço realocado que será atibuido ao vetor em questão.
 */
 Passageiro *realocPassageiros(Passageiro *p, int x){
     if (x == 0){
@@ -266,6 +274,10 @@ Passageiro *realocPassageiros(Passageiro *p, int x){
     return b;
 }
 
+/*
+Previne o vazamento da memória alocada, 
+ uma boa pratica adotada para esse código.
+*/
 void liberarMemoria(Passageiro *lista, int n) {
     for(int i = 0; i < n; i++) {
         free(lista[i].nome);
@@ -279,10 +291,21 @@ void liberarMemoria(Passageiro *lista, int n) {
     free(lista);
 }
 
+/*
+Comando AV:
+ possibilita o usuário informar os dados básicos do voo, sao armazenados em infoVoo.
+*/
 void abrirVoo(float infoVoo[4]) {
     scanf("%f %f %f", &infoVoo[0], &infoVoo[1], &infoVoo[2]);
 }
 
+/*
+Comando RR:
+ a lista sera realocada para que caiba um novo passageiro,
+ em seguida a função ler passageiro será chamada para serem coletados os dados
+ após isso ele confere se o número máximo de assentos foi atingido
+ caso sim ele chama a funcao de FV.
+*/
 void registrarPassageiro(Passageiro **lista , int *n, float infoVoo[4]) {
     (*n)++;
     *lista = realocPassageiros(*lista, *n);
@@ -293,6 +316,14 @@ void registrarPassageiro(Passageiro **lista , int *n, float infoVoo[4]) {
     }
 }
 
+/*
+Comando CR:
+ o usuário digita um cpf que quer buscar, em seguida, 
+ a funcao achar CPF retornara o valor referente ao indice do 
+ passageiro com esse CPF de acordo com a lista, caso seja inválido
+ uma mensagem de erro será exibida, no caso de ser válido 
+ os dados do passageiro serão exibidos de maneira "longa".
+*/
 void consultarReserva(Passageiro *lista, int n) {
     char cpfBuscado[15];
     scanf(" %s", cpfBuscado);
@@ -307,8 +338,12 @@ void consultarReserva(Passageiro *lista, int n) {
     printf("--------------------------------------------------\n");
 }
 
-//Não testei, talvez funcione só com *lista
-//Precisa liberar a memória???
+/*
+Comando CA:
+ realiza o mesmo provesso de buscar o CPF,
+ se for válido o passageiro em questao será removido sa liata e a mesma
+ irá ser realocada para uma otimizacao da memória do programa.
+*/
 void cancelarReserva(Passageiro **lista ,int *n, float infoVoo[4]) {
     char cpfBuscado[15];
     scanf("%s", cpfBuscado);
@@ -327,6 +362,12 @@ void cancelarReserva(Passageiro **lista ,int *n, float infoVoo[4]) {
     *lista = realocPassageiros(*lista, *n);
 }
 
+/*
+Comando MR:
+ faz o mesmo esquema de procura de cliente por CPF
+ caso válido o usuário deve colocar os novos dados, eles serão sobrescrevidos
+ nos antigos.
+*/
 void modificarReserva(Passageiro *lista, int n) {
     char cpfBuscado[15];
     scanf("%s", cpfBuscado);
@@ -343,6 +384,13 @@ void modificarReserva(Passageiro *lista, int n) {
     printf("--------------------------------------------------\n");
 }
 
+/*
+Comando FD:
+ serão exibidas a quantidade de reservas totais e também o valor arrecadado com a venda dos assentos.
+ Após isso todos os dados serão salvos em um arquivo binário(.bin)
+ e a memória alocada será liberada, enfim encerrando o programa.
+ OBS: permite modificações futuras
+*/
 void fecharDia(Passageiro *lista, int n, float infoVoo[4]) {
     FILE *fp = fopen("dados.bin", "wb");
     if (fp == NULL) printf("FP ta nulo!\n");
@@ -355,6 +403,13 @@ void fecharDia(Passageiro *lista, int n, float infoVoo[4]) {
     fclose(fp);
 }
 
+/*
+Comando FV:
+ os dados serão salvos e em seguida 
+ um aviso que o Voo fechou será exibido junto a "versão curta" dos dados dos passageiros,
+ enfim o programa se encerrará.
+ OBS: não permitr modificações futuras, apenas os comandos CR e FV estarão válidos para uso.
+*/
 void fecharVoo(Passageiro *lista, int n, float infoVoo[4]) {
     FILE *fp = fopen("dados.bin", "wb");
     printf("Voo Fechado!\n\n");
@@ -426,8 +481,11 @@ Passageiro lerPassageiro(void){
 }
 
 /*
-Funcao para consultar reserva, chamada pelo comando CR
-Entrada: 
+Imprime os dados dos passageiros de dois modos: curto ou longo:
+caso curto: apenas exibidos cpf, nome, sobrenome e assento;
+caso longo: todos os dados inseridos em lerPassageiro serão impressos.
+Entradas: p - o passageiro a ser impresso
+          *modo - "curto" ou "longo"
 */
 void imprimirPassageiro(Passageiro p, char *modo){
     if (!strcmp(modo, "curto")){
