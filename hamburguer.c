@@ -82,8 +82,17 @@ int main (void){
     }
     char comando[3] = "NA";
     while (strcmp(comando, "FV") != 0 && (strcmp(comando, "FD") != 0 || voo_fechado)){ 
-        scanf("%s", comando); //Ler comando do usuário.
-             
+        int parada = 0;
+        for (int i = 0; i < 2; i++){
+            if (scanf(" %c", &comando[i]) == EOF)
+            {
+                if (voo_fechado) fecharVoo(lista_passageiros, tamanho_lista_passageiros, informacoes_do_voo);
+                else fecharDia(lista_passageiros, tamanho_lista_passageiros, informacoes_do_voo);
+                parada = 1;
+                break;       
+            } 
+        } //Ler comando do usuário.
+        if (parada) break;
         if (!strcmp(comando, "AV") && !voo_encontrado){ 
             abrirVoo(informacoes_do_voo);
             voo_encontrado = 1;
@@ -94,6 +103,7 @@ int main (void){
                fecharVoo(lista_passageiros, tamanho_lista_passageiros, informacoes_do_voo);
                printf("\n");
                voo_fechado = 1;
+               break;
            }
         }
         else if (!strcmp(comando, "MR") && !voo_fechado){ //Modificar Reserva.
@@ -128,8 +138,10 @@ comando limparLinhaStream:
 */
 
 void limparLinhaStream(FILE *entrada){
-    char tmp[500];
-    fgets(tmp, 500, entrada);
+    char tmp = '\0';
+    while (tmp != '\n'){
+        if (scanf("%c", &tmp) == EOF) break;
+    }
 }
 
 /*
